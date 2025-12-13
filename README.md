@@ -26,7 +26,7 @@ The game is a multi level 3D game.
 
 Mazes are generated from each letters of the sentences in the 'DATA/level' config file, using the config specified font.
 
-Use the keyboard and mouse to find the exit door in each letter as quick as possible.
+Use the keyboard and mouse to reach the exit letter at the end of the sentence without falling and before running out of time.
 
 Fire the surprise boxes to reclaim some life/speed/score upgrade bonuses.
 
@@ -51,9 +51,18 @@ Fire the surprise boxes to reclaim some life/speed/score upgrade bonuses.
 ## procedure
 
 ```
+# clone the repo
 git clone https://github.com/gullradriel/TrueTypeFont-Escapade.git
 cd TrueTypeFont-Escapade
+
+# on host compilation
 make
+make clean
+
+# wasm build
+make wasm
+make wasm-clean
+make wasm-clean-libs
 ```
 
 # Ressources used
