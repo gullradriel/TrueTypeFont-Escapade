@@ -4,7 +4,8 @@
 The game:                                                            
  - Reach the green glyph at the end of the level                     
  - Shoot bonus boxes to gain more points/time/speed                  
-                                                                      
+ - Do not fall or be out of time
+
 Controls:                                                            
  - ZQSD or arrow keys => upward/backward/strafe left and right     
  - Mouse axis => orientation                                             
