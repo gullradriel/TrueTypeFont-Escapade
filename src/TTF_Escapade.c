@@ -171,6 +171,7 @@ typedef struct {
 
     bool paused;
     bool mouse_locked;
+    bool cheat_code_used;
 
     /* Level info */
     VoxelField vf;
@@ -245,6 +246,7 @@ void game_context_init(GameContext* ctx) {
     ctx->pending_w = 0;
     ctx->pending_h = 0;
     ctx->pending_resize = false;
+    ctx->cheat_code_used = false;
 }
 
 void game_context_free(GameContext* ctx) {
@@ -450,6 +452,27 @@ void update_particles(GameContext* ctx, float dt) {
     }
 }
 
+/* move pink lights */
+static void update_pink_lights(GameContext* ctx, float dt) {
+    const float begin_x = ctx->vf.origin_x;                                /* beginning of level */
+    const float end_x = ctx->vf.origin_x + ctx->vf.gw * ctx->vf.cell_size; /* end of level */
+
+    for (int i = 0; i < ctx->pink_lights.capacity; ++i) {
+        GameEntity* l = &ctx->pink_lights.entities[i];
+        if (!entity_is_active(l)) continue;
+
+        const float speed = l->vel.x;
+
+        /* Move from end -> beginning (toward smaller x). Flip sign if your level direction is opposite. */
+        l->pos.x -= speed * dt;
+
+        /* If it went past the beginning, respawn back at the end */
+        if (l->pos.x < begin_x - ctx->vf.cell_size) {
+            l->pos.x = end_x + frandf(0.0f, 5.0f * ctx->vf.cell_size);
+        }
+    }
+}
+
 /*
  * RENDERING FUNCTIONS
  */
@@ -620,7 +643,7 @@ int build_level_geometry(GameContext* ctx, ALLEGRO_FONT* level_font, const char*
                 }
             }
         }
-        draw_text_box_with_progress("Fill solid & is goal...", gui_font, ctx->dw / 2, ctx->dh / 2 - 100,
+        draw_text_box_with_progress("Fill glyphs...", gui_font, ctx->dw / 2, ctx->dh / 2 - 100,
                                     al_map_rgb(255, 255, 255),     // text
                                     al_map_rgba(20, 20, 20, 220),  // bg
                                     al_map_rgb(255, 255, 255),     // border
@@ -1350,6 +1373,7 @@ int main(int argc, char** argv) {
                     if (ctx.gravity_enabled) {
                         ctx.vertical_vel = 0.0f;
                         ctx.on_ground = false;
+                        ctx.cheat_code_used = true;
                     }
                     n_log(LOG_DEBUG, "CHEATCODE gravity_enabled = %d", ctx.gravity_enabled);
                 } else if (kc == ALLEGRO_KEY_1) {
@@ -1368,6 +1392,7 @@ int main(int argc, char** argv) {
                     /* Time bonus cheat */
                     n_log(LOG_DEBUG, "CHEATCODE TIME +30s !!");
                     ctx.time_remaining += 30.0f;
+                    ctx.cheat_code_used = true;
                 } else if (kc == ALLEGRO_KEY_V) {
                     /* Speed bonus cheat */
                     ctx.move_speed += speed_bonus_increment;
@@ -1377,6 +1402,7 @@ int main(int argc, char** argv) {
                     if (ctx.move_speed > ctx.max_speed)
                         ctx.max_speed = ctx.move_speed;
                     n_log(LOG_DEBUG, "CHEATCODE SPEED %f, total: %f !!", speed_bonus_increment, ctx.move_speed);
+                    ctx.cheat_code_used = true;
                 } else if (kc == ALLEGRO_KEY_SPACE) {
                     if (!ctx.paused && ctx.state == STATE_PLAY) {
                         if (ctx.gravity_enabled) {
@@ -1686,6 +1712,8 @@ int main(int argc, char** argv) {
                                        &level_boxes_hit, &level_time_bonus_boxes, &level_speed_bonus_boxes);
                 }
 
+                update_pink_lights(&ctx, dt);
+
                 /* Celebration particles */
                 if (ctx.state == STATE_PARTY_END && ctx.party_result == PARTY_SUCCESS) {
                     spawn_celebration_particles(&ctx);
@@ -1826,13 +1854,8 @@ int main(int argc, char** argv) {
                     int ti = (int)ctx.time_remaining;
                     if (ti < 0) ti = 0;
 
-                    if (get_log_level() == LOG_DEBUG) {
-                        snprintf(buf, sizeof(buf), "Level %d/%d | Level score: %d | Time: %02d:%02d | Speed: %0.2f | Max Speed: %0.2f",
-                                 ctx.level_index + 1, level_count, ctx.score, ti / 60, ti % 60, ctx.move_forward, ctx.move_speed);
-                    } else {
-                        snprintf(buf, sizeof(buf), "Level %d/%d | Level score: %d | Time: %02d:%02d",
-                                 ctx.level_index + 1, level_count, ctx.score, ti / 60, ti % 60);
-                    }
+                    snprintf(buf, sizeof(buf), "Level %d/%d | Level score: %d | Time: %02d:%02d | Speed: %0.2f",
+                             ctx.level_index + 1, level_count, ctx.score, ti / 60, ti % 60, ctx.move_forward);
 
                     al_draw_text(gui_font, al_map_rgb(255, 255, 255), 10, 10, 0, buf);
 
@@ -1853,18 +1876,26 @@ int main(int argc, char** argv) {
 
                     /* End state messages */
                     if (ctx.state == STATE_LEVEL_END) {
-                        snprintf(buf, sizeof(buf), "LEVEL COMPLETE! Level score: %d, Total score: %d",
+                        snprintf(buf, sizeof(buf), "LEVEL COMPLETED! Level score: %d, Total score: %d",
                                  ctx.score, ctx.total_score);
-                        al_draw_text(gui_font, al_map_rgb(0, 255, 0), ctx.dw / 2, ctx.dh / 2 - 40,
+                        al_draw_text(gui_font, al_map_rgb(0, 255, 0), ctx.dw / 2, ctx.dh / 2 - 80,
                                      ALLEGRO_ALIGN_CENTRE, buf);
-                        al_draw_text(gui_font, al_map_rgb(255, 255, 255), ctx.dw / 2, ctx.dh / 2 + 20,
+                        if (ctx.cheat_code_used)
+                            al_draw_text(gui_font, al_map_rgb(255, 0, 0), ctx.dw / 2, ctx.dh / 2 - 20,
+                                         ALLEGRO_ALIGN_CENTRE, "cheat code were used !-)");
+
+                        al_draw_text(gui_font, al_map_rgb(255, 255, 255), ctx.dw / 2, ctx.dh / 2 + 40,
                                      ALLEGRO_ALIGN_CENTRE, "Press ENTER for next level or ESC to quit");
                     } else if (ctx.state == STATE_PARTY_END) {
                         if (ctx.party_result == PARTY_SUCCESS && !time_over && !fell_out) {
                             snprintf(buf, sizeof(buf), "YOU WIN! Final score: %d", ctx.total_score);
-                            al_draw_text(gui_font, al_map_rgb(0, 255, 0), ctx.dw / 2, ctx.dh / 2 - 40,
+                            al_draw_text(gui_font, al_map_rgb(0, 255, 0), ctx.dw / 2, ctx.dh / 2 - 80,
                                          ALLEGRO_ALIGN_CENTRE, buf);
-                            al_draw_text(gui_font, al_map_rgb(255, 255, 255), ctx.dw / 2, ctx.dh / 2 + 20,
+                            if (ctx.cheat_code_used)
+                                al_draw_text(gui_font, al_map_rgb(255, 0, 0), ctx.dw / 2, ctx.dh / 2 - 20,
+                                             ALLEGRO_ALIGN_CENTRE, "(but you used a cheat code...)");
+
+                            al_draw_text(gui_font, al_map_rgb(255, 255, 255), ctx.dw / 2, ctx.dh / 2 + 40,
                                          ALLEGRO_ALIGN_CENTRE, "Press ENTER to go to score or ESC to quit");
                         } else {
                             if (time_over) {
@@ -1946,7 +1977,7 @@ int main(int argc, char** argv) {
                 int bursts = rand() % 3;
                 for (int bi = 0; bi < bursts; ++bi) {
                     Vec3 center = v_make(frandf(0.0f, (float)ctx.dw), frandf(-20.0f, 0.0f), 0.0f);
-                    int count = 15 + rand() % 30;
+                    int count = 100 + rand() % 100;
 
                     for (int pi = 0; pi < count; ++pi) {
                         GameEntity* p = pool_alloc(&ctx.particles);
@@ -2010,14 +2041,17 @@ int main(int argc, char** argv) {
 
                     char buf[256];
                     snprintf(buf, sizeof(buf), "CONGRATULATIONS! Final score: %d", ctx.total_score);
-                    al_draw_text(gui_font, al_map_rgb(0, 255, 0), ctx.dw / 2, ctx.dh / 2 - 40,
+                    al_draw_text(gui_font, al_map_rgb(0, 255, 0), ctx.dw / 2, ctx.dh / 2 - 80,
                                  ALLEGRO_ALIGN_CENTRE, buf);
 
+                    if (ctx.cheat_code_used)
+                        al_draw_text(gui_font, al_map_rgb(255, 0, 0), ctx.dw / 2, ctx.dh / 2 - 20,
+                                     ALLEGRO_ALIGN_CENTRE, "Next time try without the cheat code !-)");
                     snprintf(buf, sizeof(buf), "Max speed reached: %.2f", ctx.max_speed);
-                    al_draw_text(gui_font, al_map_rgb(200, 200, 255), ctx.dw / 2, ctx.dh / 2 + 20,
+                    al_draw_text(gui_font, al_map_rgb(200, 200, 255), ctx.dw / 2, ctx.dh / 2 + 40,
                                  ALLEGRO_ALIGN_CENTRE, buf);
 
-                    al_draw_text(gui_font, al_map_rgb(255, 255, 255), ctx.dw / 2, ctx.dh / 2 + 80,
+                    al_draw_text(gui_font, al_map_rgb(255, 255, 255), ctx.dw / 2, ctx.dh / 2 + 100,
                                  ALLEGRO_ALIGN_CENTRE, "Press ENTER or ESC to quit");
 
                     al_flip_display();

@@ -171,7 +171,7 @@ static inline void entity_init_box(GameEntity* e, Vec3 pos, float half_size, uin
 /* Create a pink light entity */
 static inline void entity_init_pink_light(GameEntity* e, Vec3 pos, float radius) {
     e->pos = pos;
-    e->vel = v_zero();
+    e->vel = v_make(frandf(1.0f, 80.0f), 0.0f, 0.0f);
     e->prev_pos = pos;
     e->color = al_map_rgba(0xff, 0x60, 0xff, 180);
     e->size = radius;
