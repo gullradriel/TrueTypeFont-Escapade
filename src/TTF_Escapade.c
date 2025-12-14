@@ -1703,12 +1703,24 @@ int main(int argc, char** argv) {
                     bool overlay_letters = (PULSE_TEXT != 0);
                     bool overlay_goals = (COLOR_CYCLE_GOAL != 0);
 
+#ifdef __EMSCRIPTEN__
+                    /* triggered by emscripten fullscreen callbacks */
                     if (ctx.pending_resize) {
+                        /* keep track of fullscreen status */
+                        if (!fullscreen)
+                            fullscreen = true;
+                        else
+                            fullscreen = false;
+
                         ctx.pending_resize = false;
 
-                        if (ctx.pending_w > 0 && ctx.pending_h > 0) {
-                            al_resize_display(ctx.display, ctx.pending_w, ctx.pending_h);
+                        /* reset size on bad values or when leaving fullscreen */
+                        if (ctx.pending_w <= 0 || ctx.pending_h <= 0 || !fullscreen) {
+                            ctx.pending_w = WIDTH;
+                            ctx.pending_h = HEIGHT;
                         }
+
+                        al_resize_display(ctx.display, ctx.pending_w, ctx.pending_h);
 
                         /* For GL/WebGL backends, make sure you are drawing to the display again */
                         al_set_target_backbuffer(ctx.display);
@@ -1718,7 +1730,7 @@ int main(int argc, char** argv) {
                         ctx.center_x = ctx.dw / 2;
                         ctx.center_y = ctx.dh / 2;
                     }
-
+#endif
                     al_set_render_state(ALLEGRO_DEPTH_TEST, 1);
                     al_set_render_state(ALLEGRO_WRITE_MASK, ALLEGRO_MASK_DEPTH | ALLEGRO_MASK_RGBA);
 
