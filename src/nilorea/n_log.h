@@ -89,6 +89,8 @@ void set_log_level(const int log_level);
 int get_log_level(void);
 /* set a file as standard log output */
 int set_log_file(char* file);
+/* set a FILE as standard log output */
+int set_log_file_fd(FILE* fd);
 /* get the log gile name if any */
 FILE* get_log_file(void);
 /* Full log function. Muste be wrapped in a MACRO to get the correct file-func-line informations */

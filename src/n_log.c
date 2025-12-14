@@ -131,6 +131,23 @@ int set_log_file(char* file) {
     return TRUE;
 } /* set_log_file */
 
+/*!\fn int set_log_file_fd( FILE *fd )
+ *\brief Set the logging to a file instead of stderr
+ *\param file The filename where to log
+ *\return TRUE or FALSE
+ */
+int set_log_file_fd(FILE* fd) {
+    __n_assert(fd, return FALSE);
+
+    log_file = fd;
+
+    set_log_level(LOG_FILE);
+
+    __n_assert(log_file, return FALSE);
+
+    return TRUE;
+} /* set_log_file */
+
 /*!\fn FILE *get_log_file()
  *\brief return the current log_file
  *\return a valid FILE handle or NULL
