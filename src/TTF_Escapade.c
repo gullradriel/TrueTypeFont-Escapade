@@ -94,6 +94,7 @@ char* intro_sample = NULL;
 char* win_sample = NULL;
 char* loose_sample = NULL;
 char* shoot_sample = NULL;
+char* jump_sample = NULL;
 char* hit_level_sample = NULL;
 char* hit_bonus_sample = NULL;
 char* game_over_sample = NULL;
@@ -109,6 +110,7 @@ int level_font_size = 128;
 int gui_font_size = 22;
 ALLEGRO_FONT* gui_font = NULL;
 ALLEGRO_SAMPLE* sfx_shoot = NULL;
+ALLEGRO_SAMPLE* sfx_jump = NULL;
 ALLEGRO_SAMPLE* sfx_hit_level = NULL;
 ALLEGRO_SAMPLE* sfx_hit_bonus = NULL;
 ALLEGRO_SAMPLE* sfx_falling = NULL;
@@ -125,7 +127,7 @@ float bullet_speed = 150.0f;
 int bullet_delta_divider = 4;
 double fps = 60.0;
 int getoptret = 0;
-int log_level = LOG_ERR;
+int log_level = LOG_DEBUG;
 
 /*
  * GAME CONTEXT STRUCTURE
@@ -186,6 +188,12 @@ typedef struct {
     /* Render state storage */
     ALLEGRO_STATE* render_state;
 
+    /* Display */
+    ALLEGRO_DISPLAY* display;
+    int pending_w;
+    int pending_h;
+    bool pending_resize;
+
 } GameContext;
 
 /*
@@ -231,6 +239,12 @@ void game_context_init(GameContext* ctx) {
 
     /* Render state */
     ctx->render_state = al_malloc(sizeof(ALLEGRO_STATE));
+
+    /* Display */
+    ctx->display = NULL;
+    ctx->pending_w = 0;
+    ctx->pending_h = 0;
+    ctx->pending_resize = false;
 }
 
 void game_context_free(GameContext* ctx) {
@@ -574,12 +588,12 @@ int build_level_geometry(GameContext* ctx, ALLEGRO_FONT* level_font, const char*
             goal_ranges[goal_range_count].x1 = text_start_x + (float)w_curr;
             goal_range_count++;
         }
-        draw_text_box_with_progress_gl("Loading assets...", gui_font, ctx->dw / 2, ctx->dh / 2 - 100, 8,
-                                       al_map_rgb(255, 255, 255),     // text
-                                       al_map_rgba(20, 20, 20, 220),  // bg
-                                       al_map_rgb(255, 255, 255),     // border
-                                       al_map_rgb(80, 200, 120),      // bar
-                                       0, phrase_len, i);
+        draw_text_box_with_progress("Loading assets...", gui_font, ctx->dw / 2, ctx->dh / 2 - 100,
+                                    al_map_rgb(255, 255, 255),     // text
+                                    al_map_rgba(20, 20, 20, 220),  // bg
+                                    al_map_rgb(255, 255, 255),     // border
+                                    al_map_rgb(80, 200, 120),      // bar
+                                    0, phrase_len, i);
     }
 
     /* Fill solid & is_goal */
@@ -606,12 +620,12 @@ int build_level_geometry(GameContext* ctx, ALLEGRO_FONT* level_font, const char*
                 }
             }
         }
-        draw_text_box_with_progress_gl("Fill solid & is goal...", gui_font, ctx->dw / 2, ctx->dh / 2 - 100, 8,
-                                       al_map_rgb(255, 255, 255),     // text
-                                       al_map_rgba(20, 20, 20, 220),  // bg
-                                       al_map_rgb(255, 255, 255),     // border
-                                       al_map_rgb(80, 200, 120),      // bar
-                                       0, ctx->vf.gh, gy);
+        draw_text_box_with_progress("Fill solid & is goal...", gui_font, ctx->dw / 2, ctx->dh / 2 - 100,
+                                    al_map_rgb(255, 255, 255),     // text
+                                    al_map_rgba(20, 20, 20, 220),  // bg
+                                    al_map_rgb(255, 255, 255),     // border
+                                    al_map_rgb(80, 200, 120),      // bar
+                                    0, ctx->vf.gh, gy);
 
         wasm_yield();
     }
@@ -674,12 +688,12 @@ int build_level_geometry(GameContext* ctx, ALLEGRO_FONT* level_font, const char*
                 va_add_quad(overlay, x1, y0, z0, x0, y0, z0, x0, y1, z0, x1, y1, z0, dummy);
             }
         }
-        draw_text_box_with_progress_gl("Build vertex arrays...", gui_font, ctx->dw / 2, ctx->dh / 2 - 100, 8,
-                                       al_map_rgb(255, 255, 255),     // text
-                                       al_map_rgba(20, 20, 20, 220),  // bg
-                                       al_map_rgb(255, 255, 255),     // border
-                                       al_map_rgb(80, 200, 120),      // bar
-                                       0, ctx->vf.gh, gy);
+        draw_text_box_with_progress("Build vertex arrays...", gui_font, ctx->dw / 2, ctx->dh / 2 - 100,
+                                    al_map_rgb(255, 255, 255),     // text
+                                    al_map_rgba(20, 20, 20, 220),  // bg
+                                    al_map_rgb(255, 255, 255),     // border
+                                    al_map_rgb(80, 200, 120),      // bar
+                                    0, ctx->vf.gh, gy);
 
         wasm_yield();
     }
@@ -820,6 +834,9 @@ void usage(int log_level, char* progname) {
           progname);
 }
 
+#include "ttfe_emscripten_mouse.h"
+#include "ttfe_emscripten_fullscreen.h"
+
 /*
  * MAIN FUNCTION
  */
@@ -886,10 +903,13 @@ int main(int argc, char** argv) {
     }
 
     set_log_level(log_level);
+#ifdef __EMSCRIPTEN__
+    set_log_file_fd(stdout);
+#endif
 
     /* Load config */
     if (load_app_config("DATA/app_config.json", &WIDTH, &HEIGHT, &fullscreen,
-                        &intro_sample, &win_sample, &loose_sample, &shoot_sample,
+                        &intro_sample, &win_sample, &loose_sample, &shoot_sample, &jump_sample,
                         &hit_level_sample, &hit_bonus_sample, &game_over_sample,
                         &fps,
                         &level_font_file, &level_font_size, &gui_font_file, &gui_font_size, &levels_file,
@@ -927,6 +947,9 @@ int main(int argc, char** argv) {
     al_init_primitives_addon();
     al_init_image_addon();
 
+    ALLEGRO_DISPLAY_MODE dm;
+    al_get_display_mode(al_get_num_display_modes() - 1, &dm);
+
     bool audio_ok = false;
     if (al_install_audio() && al_init_acodec_addon()) {
         if (al_reserve_samples(32)) {
@@ -940,11 +963,23 @@ int main(int argc, char** argv) {
 
     al_set_new_display_option(ALLEGRO_DEPTH_SIZE, 16, ALLEGRO_SUGGEST);
     al_set_new_display_flags(ALLEGRO_RESIZABLE);
+    if (!fullscreen) {
+        /* center window */
+        int pos_x = (dm.width - WIDTH) / 2;
+        int pos_y = (dm.height - HEIGHT) / 2;
+        al_set_new_display_flags(ALLEGRO_OPENGL | ALLEGRO_WINDOWED);
+        al_set_new_window_position(pos_x, pos_y);
+    }
 
     ALLEGRO_DISPLAY* display = al_create_display(WIDTH, HEIGHT);
     if (!display) {
         n_log(LOG_ERR, "Failed to create display");
         return FALSE;
+    }
+
+    if (fullscreen) {
+        al_set_display_flag(display, ALLEGRO_FULLSCREEN_WINDOW, fullscreen);
+        al_acknowledge_resize(display);
     }
 
     ttfe_vbo_init(&g_ttfe_stream_vbo, 16382);
@@ -962,16 +997,25 @@ int main(int argc, char** argv) {
     /* Initialize game context */
     GameContext ctx;
     game_context_init(&ctx);
+    ctx.display = display;
+#ifdef __EMSCRIPTEN__
+    /* fullscreen state callback */
+    emscripten_set_fullscreenchange_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, (void*)&ctx, EM_TRUE, on_fullscreen_change);
+
+    /* Install browser callbacks (pointer lock + movement deltas) */
+    web_init_pointer_lock(&ctx);
+#endif
 
     ctx.dw = al_get_display_width(display);
     ctx.dh = al_get_display_height(display);
     ctx.center_x = ctx.dw / 2;
     ctx.center_y = ctx.dh / 2;
 
-    al_hide_mouse_cursor(display);
-    al_grab_mouse(display);
 #ifndef __EMSCRIPTEN__
     al_set_mouse_xy(display, ctx.center_x, ctx.center_y);
+#else
+    /* On Web, hiding/grabbing is handled by pointer lock. You can keep cursor visible until lock is active. */
+    al_show_mouse_cursor(display);
 #endif
 
     /* Load intro text */
@@ -1027,6 +1071,9 @@ int main(int argc, char** argv) {
         if (!(sfx_shoot = al_load_sample(shoot_sample))) {
             n_log(LOG_ERR, "could not load %s, %s", shoot_sample, strerror(al_get_errno()));
         }
+        if (!(sfx_jump = al_load_sample(jump_sample))) {
+            n_log(LOG_ERR, "could not load %s, %s", jump_sample, strerror(al_get_errno()));
+        }
         if (!(sfx_hit_level = al_load_sample(hit_level_sample))) {
             n_log(LOG_ERR, "could not load %s, %s", hit_level_sample, strerror(al_get_errno()));
         }
@@ -1046,7 +1093,7 @@ int main(int argc, char** argv) {
             n_log(LOG_ERR, "could not load %s, %s", win_sample, strerror(al_get_errno()));
         }
     } else {
-        n_log(LOG_INFO, "not loading musics and samples as audio is not correctly initialized");
+        n_log(LOG_ERR, "not loading musics and samples as audio is not correctly initialized");
     }
 
     ALLEGRO_SAMPLE_INSTANCE* music_intro_instance = NULL;
@@ -1190,6 +1237,8 @@ int main(int argc, char** argv) {
         setup_camera_start(&ctx);
 
 #ifndef __EMSCRIPTEN__
+        al_hide_mouse_cursor(display);
+        al_grab_mouse(display);
         if (ctx.mouse_locked) {
             al_set_mouse_xy(display, ctx.center_x, ctx.center_y);
         }
@@ -1267,16 +1316,33 @@ int main(int argc, char** argv) {
                     break;
                 } else if (kc == ALLEGRO_KEY_F1) {
                     ctx.paused = !ctx.paused;
+
                     if (ctx.paused) {
                         ctx.mouse_locked = false;
+
+#ifndef __EMSCRIPTEN__
                         al_ungrab_mouse();
                         al_show_mouse_cursor(display);
+#else
+                        /* Web: release browser pointer lock so the user can interact with the page. */
+                        web_exit_pointer_lock();
+                        al_show_mouse_cursor(display);
+#endif
                     } else {
                         ctx.mouse_locked = true;
+
+#ifndef __EMSCRIPTEN__
                         al_grab_mouse(display);
                         al_hide_mouse_cursor(display);
-#ifndef __EMSCRIPTEN__
                         al_set_mouse_xy(display, ctx.center_x, ctx.center_y);
+#else
+                        /*
+                            Web: requesting pointer lock here usually works because this is executed
+                            in direct response to a key event (user gesture).
+                            If the browser refuses, the click callback will acquire it on next click.
+                        */
+                        web_request_pointer_lock();
+                        al_hide_mouse_cursor(display);
 #endif
                     }
                 } else if (kc == ALLEGRO_KEY_F3) {
@@ -1317,12 +1383,18 @@ int main(int argc, char** argv) {
                             if (ctx.on_ground) {
                                 ctx.vertical_vel = jump_vel;
                                 ctx.on_ground = false;
+                                if (audio_ok && sfx_jump) {
+                                    al_play_sample(sfx_jump, 1.0f, 0.0f, 1.0f, ALLEGRO_PLAYMODE_ONCE, NULL);
+                                }
                             } else if (save_jump_available) {
                                 float bottom = ctx.cam.position.y - ctx.cam_half_height;
                                 if (bottom > SAVE_JUMP_MIN_Y) {
                                     ctx.vertical_vel = jump_vel;
                                 }
                                 save_jump_available = false;
+                                if (audio_ok && sfx_jump) {
+                                    al_play_sample(sfx_jump, 1.0f, 0.0f, 1.0f, ALLEGRO_PLAYMODE_ONCE, NULL);
+                                }
                             }
                         }
                         keys[ALLEGRO_KEY_SPACE] = 1;
@@ -1337,6 +1409,7 @@ int main(int argc, char** argv) {
                         leaving_level = true;
                     }
                 } else if (kc == ALLEGRO_KEY_F11) {
+#ifndef __EMSCRIPTEN__
                     uint32_t flags = al_get_display_flags(display);
                     bool is_fullscreen = (flags & ALLEGRO_FULLSCREEN_WINDOW) != 0;
                     al_set_display_flag(display, ALLEGRO_FULLSCREEN_WINDOW, !is_fullscreen);
@@ -1345,7 +1418,6 @@ int main(int argc, char** argv) {
                     ctx.dh = al_get_display_height(display);
                     ctx.center_x = ctx.dw / 2;
                     ctx.center_y = ctx.dh / 2;
-#ifndef __EMSCRIPTEN__
                     if (ctx.mouse_locked) {
                         al_set_mouse_xy(display, ctx.center_x, ctx.center_y);
                     }
@@ -1360,27 +1432,35 @@ int main(int argc, char** argv) {
                     keys[ev.keyboard.keycode] = 0;
                 }
             }
-
             if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
                 if (ctx.paused) {
                     ctx.paused = false;
                     ctx.mouse_locked = true;
+
+#ifndef __EMSCRIPTEN__
                     al_grab_mouse(display);
                     al_hide_mouse_cursor(display);
-#ifndef __EMSCRIPTEN__
                     if (ctx.mouse_locked) {
                         al_set_mouse_xy(display, ctx.center_x, ctx.center_y);
                     }
+#else
+                    web_request_pointer_lock(); /* this is a user gesture, should succeed */
+                    al_hide_mouse_cursor(display);
 #endif
                 } else if (ev.mouse.button == 1 && ctx.state == STATE_PLAY) {
                     fire_projectile(&ctx, sfx_shoot, audio_ok);
                 }
             }
             if (ev.type == ALLEGRO_EVENT_MOUSE_AXES) {
+#ifndef __EMSCRIPTEN__
                 if (ctx.mouse_locked && ctx.state == STATE_PLAY && !ctx.paused) {
                     pending_mdx += (float)ev.mouse.dx;
                     pending_mdy += (float)ev.mouse.dy;
                 }
+#else
+                /* Web: deltas come from Emscripten mousemove callback (movementX/Y) under pointer lock */
+                (void)ev;
+#endif
             }
 
             if (ev.type == ALLEGRO_EVENT_TIMER) {
@@ -1413,7 +1493,11 @@ int main(int argc, char** argv) {
                 }
 
                 /* Mouse look */
+#ifndef __EMSCRIPTEN__
                 if (ctx.mouse_locked && ctx.state == STATE_PLAY && !ctx.paused) {
+#else
+                if (mouse_capture_active(&ctx)) {
+#endif
                     float dx = pending_mdx;
                     float dy = pending_mdy;
                     pending_mdx = pending_mdy = 0.0f;
@@ -1426,7 +1510,6 @@ int main(int argc, char** argv) {
                         ctx.cam.pitch = clampf(ctx.cam.pitch, -limit, limit);
 
 #ifndef __EMSCRIPTEN__
-                        // en natif tu peux garder le warp si tu veux
                         al_set_mouse_xy(display, ctx.center_x, ctx.center_y);
 #endif
                     }
@@ -1615,11 +1698,26 @@ int main(int argc, char** argv) {
                     update_particles(&ctx, dt);
                 }
 
-                // goto ignore_old_render ;
                 /*  RENDERING  */
                 if (al_is_event_queue_empty(queue)) {
                     bool overlay_letters = (PULSE_TEXT != 0);
                     bool overlay_goals = (COLOR_CYCLE_GOAL != 0);
+
+                    if (ctx.pending_resize) {
+                        ctx.pending_resize = false;
+
+                        if (ctx.pending_w > 0 && ctx.pending_h > 0) {
+                            al_resize_display(ctx.display, ctx.pending_w, ctx.pending_h);
+                        }
+
+                        /* For GL/WebGL backends, make sure you are drawing to the display again */
+                        al_set_target_backbuffer(ctx.display);
+
+                        ctx.dw = al_get_display_width(ctx.display);
+                        ctx.dh = al_get_display_height(ctx.display);
+                        ctx.center_x = ctx.dw / 2;
+                        ctx.center_y = ctx.dh / 2;
+                    }
 
                     al_set_render_state(ALLEGRO_DEPTH_TEST, 1);
                     al_set_render_state(ALLEGRO_WRITE_MASK, ALLEGRO_MASK_DEPTH | ALLEGRO_MASK_RGBA);
@@ -1937,6 +2035,7 @@ cleanup:
         if (music_intro) al_destroy_sample(music_intro);
         if (music_win) al_destroy_sample(music_win);
         if (sfx_shoot) al_destroy_sample(sfx_shoot);
+        if (sfx_jump) al_destroy_sample(sfx_jump);
         if (sfx_hit_level) al_destroy_sample(sfx_hit_level);
         if (sfx_hit_bonus) al_destroy_sample(sfx_hit_bonus);
         if (sfx_falling) al_destroy_sample(sfx_falling);

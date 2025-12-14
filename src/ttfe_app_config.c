@@ -9,7 +9,7 @@
 #include "cJSON.h"
 #include "nilorea/n_str.h"
 
-int load_app_config(char* state_filename, long int* WIDTH, long int* HEIGHT, bool* fullscreen, char** intro_sample, char** win_sample, char** loose_sample, char** shoot_sample, char** hit_level_sample, char** hit_bonus_sample, char** game_over_sample, double* fps, char** level_font_file, int* level_font_size, char** gui_font_file, int* gui_font_size, char** levels_file, float* gravity, float* jump_vel, float* config_base_speed, float* speed_bonus_increment, float* speed_max_limit, float* mouse_sensitivity, float* bullet_speed, int* bullet_delta_divider) {
+int load_app_config(char* state_filename, long int* WIDTH, long int* HEIGHT, bool* fullscreen, char** intro_sample, char** win_sample, char** loose_sample, char** shoot_sample, char** jump_sample, char** hit_level_sample, char** hit_bonus_sample, char** game_over_sample, double* fps, char** level_font_file, int* level_font_size, char** gui_font_file, int* gui_font_size, char** levels_file, float* gravity, float* jump_vel, float* config_base_speed, float* speed_bonus_increment, float* speed_max_limit, float* mouse_sensitivity, float* bullet_speed, int* bullet_delta_divider) {
     __n_assert(state_filename, return FALSE);
 
     cJSON* monitor_json = NULL;
@@ -83,6 +83,13 @@ int load_app_config(char* state_filename, long int* WIDTH, long int* HEIGHT, boo
         (*shoot_sample) = strdup(value->valuestring);
     } else {
         n_log(LOG_ERR, "shoot-sample is not a string");
+        goto error_exit;
+    }
+    value = cJSON_GetObjectItemCaseSensitive(monitor_json, "jump-sample");
+    if (cJSON_IsString(value)) {
+        (*jump_sample) = strdup(value->valuestring);
+    } else {
+        n_log(LOG_ERR, "jump-sample is not a string");
         goto error_exit;
     }
     value = cJSON_GetObjectItemCaseSensitive(monitor_json, "hit-level-sample");

@@ -18,7 +18,7 @@ VPATH=src/
 INCLUDE=src
 OBJDIR=obj
 
-ALLEGRO_LIBS=-lallegro_acodec -lallegro_audio -lallegro_color -lallegro_image -lallegro_main -lallegro_primitives -lallegro_ttf -lallegro_font -lallegro -lGL
+ALLEGRO_LIBS=-lallegro_acodec -lallegro_audio -lallegro_color -lallegro_image -lallegro_main -lallegro_primitives -lallegro_ttf -lallegro_font -lallegro 
 CFLAGS+= -DALLEGRO_UNSTABLE
 
 dir_name=$(shell date +%Y_%m_%d_%HH%MM%SS )
@@ -208,6 +208,7 @@ wasm-allegro: wasm-libvorbis
 		-DWANT_ALLOW_SSE=OFF \
 		-DWANT_DOCS=OFF \
 		-DWANT_TESTS=OFF \
+		-DWANT_EXAMPLES=OFF \
 		-DWANT_OPENAL=OFF \
 		-DALLEGRO_WAIT_EVENT_SLEEP=ON \
 		-DCMAKE_PREFIX_PATH="$(abspath $(DEPS_PREFIX))" \

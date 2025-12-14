@@ -55,7 +55,8 @@ Fire the surprise boxes to reclaim some life/speed/score upgrade bonuses.
 - SPACE : jump. When hearing the slip sound, you can also trigger a 'save jump'
 - Left mouse button : shoot projectiles
 - ENTER : start / advance to next level / get onto final screen once levels are finished
-- ESC   : quit, everywhere ESC key is quit, be carefull !
+- ESC   : quit, everywhere ESC key is quit, be carefull ! 
+  WEB VERSION: press ESC two times, first time to ungrab the mouse, second time to exit
 
 # How to build
 

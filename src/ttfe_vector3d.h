@@ -125,6 +125,9 @@ static inline void setup_3d_projection(float vertical_fov, float z_near, float z
     ALLEGRO_DISPLAY* display = al_get_current_display();
     double dw = al_get_display_width(display);
     double dh = al_get_display_height(display);
+
+    if (dh <= 0 || dw <= 0) return;
+
     double f = tan(vertical_fov / 2.0);
 
     al_identity_transform(&projection);
