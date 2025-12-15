@@ -21,7 +21,7 @@
 	"config-base-speed": 0.7 ,
 	"speed-bonus-increment": 0.1 ,
 	"speed-max-limit": 2.5 ,
-	"mouse-sensitivity": 0.025 ,
+	"mouse-sensitivity": 0.002 ,
 	"bullet-speed": 300.0 ,
 	"bullet-delta-divider": 8 
 }
