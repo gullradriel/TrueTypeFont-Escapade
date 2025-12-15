@@ -614,10 +614,10 @@ int build_level_geometry(GameContext* ctx, ALLEGRO_FONT* level_font, const char*
             goal_range_count++;
         }
         draw_text_box_with_progress("Loading assets...", gui_font, ctx->dw / 2, ctx->dh / 2 - 100,
-                                    al_map_rgb(255, 255, 255),     // text
-                                    al_map_rgba(20, 20, 20, 220),  // bg
-                                    al_map_rgb(255, 255, 255),     // border
-                                    al_map_rgb(80, 200, 120),      // bar
+                                    al_map_rgb(255, 255, 255),     /* text */
+                                    al_map_rgba(20, 20, 20, 220),  /* bg */
+                                    al_map_rgb(255, 255, 255),     /* border */
+                                    al_map_rgb(80, 200, 120),      /* bar */
                                     0, phrase_len, i);
     }
 
@@ -646,10 +646,10 @@ int build_level_geometry(GameContext* ctx, ALLEGRO_FONT* level_font, const char*
             }
         }
         draw_text_box_with_progress("Fill glyphs...", gui_font, ctx->dw / 2, ctx->dh / 2 - 100,
-                                    al_map_rgb(255, 255, 255),     // text
-                                    al_map_rgba(20, 20, 20, 220),  // bg
-                                    al_map_rgb(255, 255, 255),     // border
-                                    al_map_rgb(80, 200, 120),      // bar
+                                    al_map_rgb(255, 255, 255),     /* text */
+                                    al_map_rgba(20, 20, 20, 220),  /* bg */
+                                    al_map_rgb(255, 255, 255),     /* border */
+                                    al_map_rgb(80, 200, 120),      /* bar */
                                     0, ctx->vf.gh, gy);
 
         wasm_yield();
@@ -714,10 +714,10 @@ int build_level_geometry(GameContext* ctx, ALLEGRO_FONT* level_font, const char*
             }
         }
         draw_text_box_with_progress("Build vertex arrays...", gui_font, ctx->dw / 2, ctx->dh / 2 - 100,
-                                    al_map_rgb(255, 255, 255),     // text
-                                    al_map_rgba(20, 20, 20, 220),  // bg
-                                    al_map_rgb(255, 255, 255),     // border
-                                    al_map_rgb(80, 200, 120),      // bar
+                                    al_map_rgb(255, 255, 255),     /* text */
+                                    al_map_rgba(20, 20, 20, 220),  /* bg */
+                                    al_map_rgb(255, 255, 255),     /* border */
+                                    al_map_rgb(80, 200, 120),      /* bar */
                                     0, ctx->vf.gh, gy);
 
         wasm_yield();
