@@ -18,10 +18,10 @@
 	"levels-file": "DATA/levels.txt",
 	"gravity": -70.0 ,
 	"jump-vel": 45.0 ,
-	"config-base-speed": 0.8 ,
+	"config-base-speed": 0.7 ,
 	"speed-bonus-increment": 0.1 ,
-	"speed-max-limit": 3.0 ,
-	"mouse-sensitivity": 0.003 ,
+	"speed-max-limit": 2.5 ,
+	"mouse-sensitivity": 0.025 ,
 	"bullet-speed": 300.0 ,
 	"bullet-delta-divider": 8 
 }
