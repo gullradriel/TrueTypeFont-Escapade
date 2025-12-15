@@ -127,7 +127,9 @@ float bullet_speed = 150.0f;
 int bullet_delta_divider = 4;
 double fps = 60.0;
 int getoptret = 0;
-int log_level = LOG_DEBUG;
+/* default log level if not set by user */
+/* int log_level = LOG_DEBUG; */
+int log_level = LOG_ERR;
 
 /*
  * GAME CONTEXT STRUCTURE
@@ -865,6 +867,7 @@ void usage(int log_level, char* progname) {
  */
 
 int main(int argc, char** argv) {
+
     set_log_level(LOG_INFO);
 
     char ver_str[128] = "";
@@ -1854,8 +1857,8 @@ int main(int argc, char** argv) {
                     int ti = (int)ctx.time_remaining;
                     if (ti < 0) ti = 0;
 
-                    snprintf(buf, sizeof(buf), "Level %d/%d | Level score: %d | Time: %02d:%02d | Speed: %0.2f",
-                             ctx.level_index + 1, level_count, ctx.score, ti / 60, ti % 60, ctx.move_forward);
+                    snprintf(buf, sizeof(buf), "Level %d/%d | Level score: %d | Time: %02d:%02d | Speed: %0.2f/%0.2f",
+                             ctx.level_index + 1, level_count, ctx.score, ti / 60, ti % 60, ctx.move_speed, speed_max_limit);
 
                     al_draw_text(gui_font, al_map_rgb(255, 255, 255), 10, 10, 0, buf);
 
