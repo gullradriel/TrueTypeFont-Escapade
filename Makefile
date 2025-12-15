@@ -76,6 +76,11 @@ TTF_Escapade$(EXT): $(OBJ)
 
 all: TTF_Escapade$(EXT)
 
+
+#
+# WASM build
+#
+
 WASM_BUILD_DIR=build_emscripten
 
 ALLEGRO_DIR=allegro5
@@ -251,3 +256,4 @@ clean:
 clean-all: clean wasm-clean
 
 .PHONY: all clean clean-all wasm wasm-setup wasm-deps wasm-libogg wasm-libvorbis wasm-allegro wasm-clean
+
