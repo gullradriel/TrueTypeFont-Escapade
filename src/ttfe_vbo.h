@@ -1,4 +1,4 @@
-/**\file ttfe_vector3d.h
+/**\file ttfe_vbo.h
  *  3D VBO helpers
  *\author Castagnier Mickael
  *\version 1.0
