@@ -1,9 +1,9 @@
-/**\file n_str.c
- *  string function
- *  Everything you need to use string is here
- *\author Castagnier Mickael
- *\version 1.0
- *\date 01/04/05
+/*
+ * File: n_str.c
+ * Description: String function. Everything you need to use string is here.
+ * Author: Castagnier Mickael
+ * Version: 1.0
+ * Date: 01/04/05
  */
 
 #ifndef NO_NSTR
@@ -904,7 +904,7 @@ char** split(const char* str, const char* delim, int empty) {
         }
     }
 
-    /* on ajoute une case a null pour finir le tableau */
+    /* Add a NULL entry to mark the end of the array */
     sizeTab++;
     tab = (char**)realloc(tab, sizeof(char*) * sizeTab);
     tab[sizeTab - 1] = NULL;

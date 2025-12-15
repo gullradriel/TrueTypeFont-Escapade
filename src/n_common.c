@@ -1,8 +1,9 @@
-/**\file n_common.c
- *  common function
- *\author Castagnier Mickael
- *\version 1.0
- *\date 24/03/05
+/*
+ * File: n_common.c
+ * Description: Common function
+ * Author: Castagnier Mickael
+ * Version: 1.0
+ * Date: 24/03/05
  */
 
 #include "nilorea/n_common.h"
@@ -199,12 +200,9 @@ int n_popen(char* cmd, int read_buf_size, void** nstr_output, int* ret) {
 } /* n_popen( ... ) */
 
 #ifndef __windows__
-/*!\fn void sigchld_handler( int sig )
- * \brief Handles SIGCHLD issues when forking
- * \param sig signal type handle
- */
+/* Handles SIGCHLD issues when forking */
 void sigchld_handler(int sig) {
-    // waitpid() might overwrite errno, so we save and restore it:
+    /* waitpid() might overwrite errno, so we save and restore it */
     int saved_errno = errno;
 
     while (waitpid(-1, NULL, WNOHANG) > 0);
@@ -397,7 +395,7 @@ pid_t system_nb(const char* command, int* infp, int* outfp) {
             dup2(p_stdout[1], 1);
         }
         execlp("sh", "sh", "-c", command, (char*)NULL);
-        // should never get here
+        /* should never get here */
         int error = errno;
         n_log(LOG_ERR, "%s:%d: exec failed: %s", __FILE__, __LINE__, strerror(error));
         exit(42);

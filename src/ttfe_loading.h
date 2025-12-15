@@ -1,8 +1,9 @@
-/**\file ttfe_loading.h
- *  'loading' progress bar helpers
- *\author Castagnier Mickael
- *\version 1.0
- *\date 13/12/2025
+/*
+ * File: ttfe_loading.h
+ * Description: 'loading' progress bar helpers
+ * Author: Castagnier Mickael
+ * Version: 1.0
+ * Date: 13/12/2025
  */
 
 #ifndef TTFE_PROGRESS_LOADER_HEADER_FOR_HACKS

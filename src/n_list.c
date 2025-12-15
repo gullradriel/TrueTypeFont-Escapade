@@ -1,8 +1,9 @@
-/**\file n_list.c
- *  Pointer list functions definitions
- *\author Castagnier Mickael
- *\version 2.0
- *\date 24/04/13
+/*
+ * File: n_list.c
+ * Description: Pointer list functions definitions
+ * Author: Castagnier Mickael
+ * Version: 2.0
+ * Date: 24/04/13
  */
 
 #include "nilorea/n_common.h"

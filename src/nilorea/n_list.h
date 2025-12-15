@@ -1,8 +1,9 @@
-/**\file n_list.h
- *  List structures and definitions
- *\author Castagnier Mickael
- *\version 1.0
- *\date 24/04/13
+/*
+ * File: n_list.h
+ * Description: List structures and definitions
+ * Author: Castagnier Mickael
+ * Version: 1.0
+ * Date: 24/04/13
  */
 
 #ifndef N_GENERIC_LIST

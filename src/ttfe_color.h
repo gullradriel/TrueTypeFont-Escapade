@@ -1,8 +1,9 @@
-/**\file ttfe_color.h
- *  Colors helpers
- *\author Castagnier Mickael
- *\version 1.0
- *\date 08/12/2025
+/*
+ * File: ttfe_color.h
+ * Description: Colors helpers
+ * Author: Castagnier Mickael
+ * Version: 1.0
+ * Date: 08/12/2025
  */
 
 #ifndef TTFE_COLOR_HEADER_FOR_HACKS

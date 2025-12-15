@@ -1,3 +1,11 @@
+/*
+ * File: ttfe_emscripten_fullscreen.h
+ * Description: Emscripten fullscreen handling
+ * Author: Castagnier Mickael
+ * Version: 1.0
+ * Date: 2025
+ */
+
 #ifdef __EMSCRIPTEN__
 
 #include <emscripten/html5.h>

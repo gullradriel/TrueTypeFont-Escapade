@@ -1,7 +1,8 @@
-/**\file n_log.c
- * generic logging system
- *\author Castagnier Mickael
- *\date 2013-03-12
+/*
+ * File: n_log.c
+ * Description: Generic logging system
+ * Author: Castagnier Mickael
+ * Date: 2013-03-12
  */
 
 #include "nilorea/n_common.h"

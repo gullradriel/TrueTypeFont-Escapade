@@ -1,8 +1,9 @@
-/**\file ttfe_text.h
- *  Text loading functions
- *\author Castagnier Mickael
- *\version 1.0
- *\date 08/12/2025
+/*
+ * File: ttfe_text.h
+ * Description: Text loading functions
+ * Author: Castagnier Mickael
+ * Version: 1.0
+ * Date: 08/12/2025
  */
 
 #ifndef TTFE_TEXT_HEADER_FOR_HACKS

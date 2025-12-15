@@ -1,8 +1,9 @@
-/**\file TTF_Escapade.c
- *  Main game file - refactored to use unified entity system
- *\author Castagnier Mickael
- *\version 1.0
- *\date 02/12/2025
+/*
+ * File: TTF_Escapade.c
+ * Description: Main game file - refactored to use unified entity system
+ * Author: Castagnier Mickael
+ * Version: 1.0
+ * Date: 02/12/2025
  */
 
 #include <stdio.h>

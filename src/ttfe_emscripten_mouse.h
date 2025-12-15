@@ -1,3 +1,11 @@
+/*
+ * File: ttfe_emscripten_mouse.h
+ * Description: Browser Pointer Lock integration for Allegro5 mouse-look
+ * Author: Castagnier Mickael
+ * Version: 1.0
+ * Date: 2025
+ */
+
 #pragma once
 
 #ifdef __EMSCRIPTEN__
@@ -7,19 +15,19 @@
 #include <emscripten/html5.h>
 
 /*
-  Browser Pointer Lock integration for Allegro5 mouse-look.
-
-  Why this exists:
-  - On the Web (WASM), you cannot reliably "warp" the OS cursor (al_set_mouse_xy).
-  - Without Pointer Lock, the cursor can leave the canvas and the browser stops sending mouse move deltas.
-  - With Pointer Lock active, the browser provides relative deltas (movementX/movementY) indefinitely.
-
-  IMPORTANT BROWSER RULE:
-  Pointer Lock can only be *entered* from a user gesture (mouse click / key press).
-  So "lock on startup" must be implemented as:
-    - ctx->mouse_locked = true (game wants it)
-    - request_pointerlock is performed on the first user gesture (or on unpause key).
-*/
+ * Browser Pointer Lock integration for Allegro5 mouse-look.
+ *
+ * Why this exists:
+ * - On the Web (WASM), you cannot reliably "warp" the OS cursor (al_set_mouse_xy).
+ * - Without Pointer Lock, the cursor can leave the canvas and the browser stops sending mouse move deltas.
+ * - With Pointer Lock active, the browser provides relative deltas (movementX/movementY) indefinitely.
+ *
+ * IMPORTANT BROWSER RULE:
+ * Pointer Lock can only be *entered* from a user gesture (mouse click / key press).
+ * So "lock on startup" must be implemented as:
+ *   - ctx->mouse_locked = true (game wants it)
+ *   - request_pointerlock is performed on the first user gesture (or on unpause key).
+ */
 
 /* These are defined in TTF_Escapade.c (global accumulators). */
 extern float pending_mdx;

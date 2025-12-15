@@ -1,8 +1,9 @@
-/**\file ttfe_app_config.c
- *  Config file management
- *\author Castagnier Micka�l aka Gull Ra Driel
- *\version 1.0
- *\date 08/12/2025
+/*
+ * File: ttfe_app_config.c
+ * Description: Config file management
+ * Author: Castagnier Mickael
+ * Version: 1.0
+ * Date: 08/12/2025
  */
 
 #include "ttfe_app_config.h"
