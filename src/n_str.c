@@ -964,9 +964,9 @@ char* join(char** splitresult, char* delim) {
     size_t total_length = 0;
     int it = 0;
     while (splitresult[it]) {
-        // n_log( LOG_DEBUG , "split entry %d: %s" , it , splitresult[ it ] );
+        /* n_log( LOG_DEBUG , "split entry %d: %s" , it , splitresult[ it ] ); */
         total_length += strlen(splitresult[it]);
-        // if there is a delimitor and 'it' isn't the last entry
+        /* if there is a delimiter and 'it' isn't the last entry */
         if (delim && splitresult[it + 1])
             total_length += delim_length;
         it++;
@@ -979,7 +979,7 @@ char* join(char** splitresult, char* delim) {
         size_t copy_size = strlen(splitresult[it]);
         memcpy(&result[position], splitresult[it], copy_size);
         position += copy_size;
-        // if there is a delimitor and 'it' isn't the last entry
+        /* if there is a delimiter and 'it' isn't the last entry */
         if (delim && splitresult[it + 1]) {
             memcpy(&result[position], delim, delim_length);
             position += delim_length;
