@@ -1,4 +1,4 @@
-/**\file texts.h
+/**\file ttfe_text.h
  *  Text loading functions
  *\author Castagnier Mickael
  *\version 1.0

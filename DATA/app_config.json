@@ -5,7 +5,7 @@
 	"fps": 60.0 ,
 	"intro-sample": "DATA/Musics/christmas-is-christmas-loop-1-intro-409033.ogg",
 	"win-sample": "DATA/Musics/winning-218995.ogg",
-	"loose-sample": "DATA/Musics/falled-sound-effect-278635.ogg",
+	"lose-sample": "DATA/Musics/falled-sound-effect-278635.ogg",
 	"shoot-sample": "DATA/Musics/shoot-5-102360.ogg",
 	"hit-level-sample": "DATA/Musics/metal-hit-10-193281.ogg",
 	"hit-bonus-sample": "DATA/Musics/sound-design-elements-impact-sfx-ps-112-410551.ogg",
