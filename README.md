@@ -68,17 +68,31 @@ Fire the surprise boxes to reclaim some life/speed/score upgrade bonuses.
 ## procedure
 
 ```
-# clone the repo
+# clone the repo
 git clone https://github.com/gullradriel/TrueTypeFont-Escapade.git
 cd TrueTypeFont-Escapade
 
-# on host compilation
+###############
+# Compilation #
+###############
+
+# Linux/Windows build
 make
+
+# wasm/Emscripten build
+make wasm
+
+############
+# CLEANING #
+############
+
+# clean Linux/Windows build
 make clean
 
-# wasm build
-make wasm
+# clean wasm/Emscripten game build
 make wasm-clean
+
+# clean wasm/Emscripten libs used by the wasm game
 make wasm-clean-libs
 ```
 
