@@ -92,7 +92,7 @@ float pending_mdy = 0.0f;
 
 char* intro_sample = NULL;
 char* win_sample = NULL;
-char* loose_sample = NULL;
+char* lose_sample = NULL;
 char* shoot_sample = NULL;
 char* jump_sample = NULL;
 char* hit_level_sample = NULL;
@@ -935,7 +935,7 @@ int main(int argc, char** argv) {
 
     /* Load config */
     if (load_app_config("DATA/app_config.json", &WIDTH, &HEIGHT, &fullscreen,
-                        &intro_sample, &win_sample, &loose_sample, &shoot_sample, &jump_sample,
+                        &intro_sample, &win_sample, &lose_sample, &shoot_sample, &jump_sample,
                         &hit_level_sample, &hit_bonus_sample, &game_over_sample,
                         &fps,
                         &level_font_file, &level_font_size, &gui_font_file, &gui_font_size, &levels_file,
@@ -1106,8 +1106,8 @@ int main(int argc, char** argv) {
         if (!(sfx_hit_bonus = al_load_sample(hit_bonus_sample))) {
             n_log(LOG_ERR, "could not load %s, %s", hit_bonus_sample, strerror(al_get_errno()));
         }
-        if (!(sfx_falling = al_load_sample(loose_sample))) {
-            n_log(LOG_ERR, "could not load %s, %s", loose_sample, strerror(al_get_errno()));
+        if (!(sfx_falling = al_load_sample(lose_sample))) {
+            n_log(LOG_ERR, "could not load %s, %s", lose_sample, strerror(al_get_errno()));
         }
         if (!(sfx_game_over = al_load_sample(game_over_sample))) {
             n_log(LOG_ERR, "could not load %s, %s", game_over_sample, strerror(al_get_errno()));
