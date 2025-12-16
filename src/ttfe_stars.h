@@ -1,9 +1,8 @@
-/*
- * File: ttfe_stars.h
- * Description: Stars helpers - now uses unified entity system
- * Author: Castagnier Mickael
- * Version: 1.0
- * Date: 08/12/2025
+/**\file ttfe_stars.h
+ *  Stars helpers - now uses unified entity system
+ *\author Castagnier Mickael
+ *\version 1.0
+ *\date 08/12/2025
  */
 
 #ifndef TTFE_STAR_HEADER_FOR_HACKS

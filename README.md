@@ -18,15 +18,11 @@
 
 My entry for Krampus Hack 2025, a game jam hosted by https://tins.amarillion.org/
 
-## Author
-
-Castagnier Mickael (GullRaDriel)
-
-## Secret Santa
+# Secret Santa
 
 I'm the Secret Santa for dlharmon911
 
-## Recipient wishlist
+# Recipient wishlist
 
 ```
 Two weeks away!!! What to wish for? As some of you might know, I'm a big fan of font manipulation. So I think I'll will wish for something font related.
@@ -40,7 +36,7 @@ And as always the most important rule:
 4. Have fun!!!!!
 ```
 
-## The entry, TrueTypeFont Escapade
+# The entry, TrueTypeFont Escapade
 
 The game is a multi level 3D game.
 
@@ -50,7 +46,7 @@ Use the keyboard and mouse to reach the exit letter at the end of the sentence w
 
 Fire the surprise boxes to reclaim some life/speed/score upgrade bonuses.
 
-## Controls
+# Controls
 
 - W/S/A/D or arrows or ZQSD : move
 - Mouse : look
@@ -62,14 +58,14 @@ Fire the surprise boxes to reclaim some life/speed/score upgrade bonuses.
 - ESC   : quit, everywhere ESC key is quit, be carefull ! 
   WEB VERSION: press ESC two times, first time to ungrab the mouse, second time to exit
 
-## How to build
+# How to build
 
-### Prerequisites
+## prerequisites
 - make
 - gcc
 - allegro development libraries installed
 
-### Procedure
+## procedure
 
 ```
 # clone the repo
@@ -93,17 +89,20 @@ make wasm
 # clean Linux/Windows build
 make clean
 
-# clean wasm/Emscripten game build and libs
+# clean wasm/Emscripten game build
 make wasm-clean
+
+# clean wasm/Emscripten libs used by the wasm game
+make wasm-clean-libs
 ```
 
-## Resources used
+# Resources used
 
-### Songs and sound effects
+## songs and sound effects
 
 All taken are from https://pixabay.com/
 
-#### Bonus: shell script used to convert to ogg
+### bonus: shell used to convert to ogg
 
 ```
 for file in `ls *.mp3`
@@ -113,9 +112,9 @@ do
 done
 ```
 
-### References / Articles for the 3D stuff
+## References / Articles for the 3D stuff
 
-#### 3D from Allegro 5
+### 3D from Allegro 5
 
 - Allegro 5 3D camera and transforms
 
@@ -129,18 +128,18 @@ done
 
 - ALLEGRO_VERTEX documentation: how 3D vertices (position, color, texture coords) are defined and drawn with al_draw_prim, which is exactly what the voxelized letters and boxes use.
 
-#### 3D collision & capsule / AABB articles
+### 3D collision & capsule / AABB articles
 
 - "Capsule Collision Detection" : https://wickedengine.net/2020/04/capsule-collision-detection
 - "Real Time Collision Detection" : http://www.r-5.org/files/books/computers/algo-list/realtime-3d/Christer_Ericson-Real-Time_Collision_Detection-EN.pdf
 
-## Additional Tweaks
+# Additional TWEAKS
 
 You can have a look at app_config.json to see how to tweak the internals (speed, gravity, fonts used, ...)
 
 You can also use in games keyboard shortcut I used to help me test the game, see below.
 
-### CHEAT keyboard shortcuts
+## CHEAT keyboard shortcuts
 
 - F3 : toggle gravity aka fly mode
 - 1  : toggle COLOR_CYCLE_GOAL (goal rainbow)
@@ -149,7 +148,7 @@ You can also use in games keyboard shortcut I used to help me test the game, see
 - t  : add 30s of time
 - v  : add SPEED-BONUS-INCREMENT to maximum player's velocity
 
-### Command line arguments
+## Command line arguments
 
 TTF_Escapade can be started with:
 

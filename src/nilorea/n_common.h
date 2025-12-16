@@ -1,9 +1,8 @@
-/*
- * File: n_common.h
- * Description: Common headers and low-level hugly functions & define
- * Author: Castagnier Mickael
- * Version: 1.0
- * Date: 24/03/05
+/**\file n_common.h
+ * Common headers and low-level hugly functions & define
+ *\author Castagnier Mickael
+ *\version 1.0
+ *\date 24/03/05
  */
 
 #ifndef __NILOREA_COMMONS__

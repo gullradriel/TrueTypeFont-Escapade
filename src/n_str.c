@@ -1,9 +1,9 @@
-/*
- * File: n_str.c
- * Description: String function. Everything you need to use string is here.
- * Author: Castagnier Mickael
- * Version: 1.0
- * Date: 01/04/05
+/**\file n_str.c
+ *  string function
+ *  Everything you need to use string is here
+ *\author Castagnier Mickael
+ *\version 1.0
+ *\date 01/04/05
  */
 
 #ifndef NO_NSTR

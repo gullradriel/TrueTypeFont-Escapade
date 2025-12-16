@@ -1,9 +1,8 @@
-/*
- * File: ttfe_vector3d.h
- * Description: 3D vector, voxel and camera helpers
- * Author: Castagnier Mickael
- * Version: 1.0
- * Date: 04/12/2025
+/**\file ttfe_vector3d.h
+ *  3D vector, voxel and camera helpers
+ *\author Castagnier Mickael
+ *\version 1.0
+ *\date 04/12/2025
  */
 
 #ifndef TTFE_VECTOR3D_HEADER_FOR_HACKS

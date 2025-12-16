@@ -1,9 +1,8 @@
-/*
- * File: ttfe_vbo.h
- * Description: 3D VBO helpers
- * Author: Castagnier Mickael
- * Version: 1.0
- * Date: 11/12/2025
+/**\file ttfe_vbo.h
+ *  3D VBO helpers
+ *\author Castagnier Mickael
+ *\version 1.0
+ *\date 11/12/2025
  */
 
 #ifndef TTFE_VBO_HEADER_FOR_HACKS

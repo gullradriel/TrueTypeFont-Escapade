@@ -1,9 +1,8 @@
-/*
- * File: n_common.c
- * Description: Common function
- * Author: Castagnier Mickael
- * Version: 1.0
- * Date: 24/03/05
+/**\file n_common.c
+ *  common function
+ *\author Castagnier Mickael
+ *\version 1.0
+ *\date 24/03/05
  */
 
 #include "nilorea/n_common.h"
@@ -200,7 +199,10 @@ int n_popen(char* cmd, int read_buf_size, void** nstr_output, int* ret) {
 } /* n_popen( ... ) */
 
 #ifndef __windows__
-/* Handles SIGCHLD issues when forking */
+/*!\fn void sigchld_handler( int sig )
+ * \brief Handles SIGCHLD issues when forking
+ * \param sig signal type handle
+ */
 void sigchld_handler(int sig) {
     /* waitpid() might overwrite errno, so we save and restore it */
     int saved_errno = errno;
@@ -217,7 +219,7 @@ void sigchld_handler(int sig) {
  */
 int sigchld_handler_installer() {
     struct sigaction sa;
-    sa.sa_handler = sigchld_handler;  // reap all dead processes
+    sa.sa_handler = sigchld_handler;  /* reap all dead processes */
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = SA_RESTART;
     if (sigaction(SIGCHLD, &sa, NULL) == -1) {

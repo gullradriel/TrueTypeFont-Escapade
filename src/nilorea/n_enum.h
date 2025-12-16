@@ -1,9 +1,8 @@
-/*
- * File: n_enum.h
- * Description: Macro to build enums and their tostring counterparts, a reduced version of https://github.com/FredBienvenu/SmartEnum
- * Author: Castagnier Mickael, based on original FredBienvenu SmartEnum entry
- * Version: 1.0
- * Date: 28/09/2021
+/**\file n_enum.h
+ * Macro to build enums and their tostring counterparts, a reduced version of https://github.com/FredBienvenu/SmartEnum
+ *\author Castagnier Mickael, based on original FredBienvenu SmartEnum entry
+ *\version 1.0
+ *\date 28/09/2021
  */
 
 #ifndef __N_ENUM_HEADER__

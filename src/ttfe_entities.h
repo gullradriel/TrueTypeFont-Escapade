@@ -1,9 +1,8 @@
-/*
- * File: ttfe_entities.h
- * Description: Game entities: unified structures for game objects
- * Author: Castagnier Mickael
- * Version: 1.0
- * Date: 08/12/2025
+/**\file ttfe_entities.h
+ *  Game entities: unified structures for game objects
+ *\author Castagnier Mickael
+ *\version 1.0
+ *\date 08/12/2025
  */
 
 #ifndef TTFE_ENTITIES_HEADER

@@ -1,9 +1,8 @@
-/*
- * File: n_str.h
- * Description: N_STR and string function declaration
- * Author: Castagnier Mickael
- * Version: 2.0
- * Date: 05/02/14
+/**\file n_str.h
+ *  N_STR and string function declaration
+ *\author Castagnier Mickael
+ *\version 2.0
+ *\date 05/02/14
  */
 
 #ifndef N_STRFUNC

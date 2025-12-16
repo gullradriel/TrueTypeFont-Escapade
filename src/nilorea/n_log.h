@@ -1,8 +1,7 @@
-/*
- * File: n_log.h
- * Description: Generic log system
- * Author: Castagnier Mickael
- * Date: 2013-04-15
+/**\file n_log.h
+ * Generic log system
+ *\author Castagnier Mickael
+ *\date 2013-04-15
  */
 
 #ifndef __LOG_HEADER_GUARD__
