@@ -63,7 +63,7 @@ else
 endif
 
 
-SRC=n_common.c n_log.c n_str.c n_list.c cJSON.c ttfe_app_config.c TTF_Escapade.c
+SRC=n_common.c n_log.c n_str.c n_list.c cJSON.c ttfe_app_config.c ttfe_game_context.c TTF_Escapade.c
 OBJ=$(patsubst %.c,$(OBJDIR)/%.o,$(SRC))
 
 $(shell mkdir -p $(OBJDIR))
@@ -256,4 +256,3 @@ clean:
 clean-all: clean wasm-clean
 
 .PHONY: all clean clean-all wasm wasm-setup wasm-deps wasm-libogg wasm-libvorbis wasm-allegro wasm-clean
-

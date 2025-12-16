@@ -32,6 +32,7 @@
 #include "ttfe_text.h"
 #include "ttfe_stars.h"
 #include "ttfe_loading.h"
+#include "ttfe_game_context.h"
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -59,27 +60,6 @@ float light_phase = 0.0f;
 /* depth viewport for the camera */
 const float Z_NEAR = 1.0f;
 const float Z_FAR = 5000.0f;
-
-/* Entity pool sizes */
-#define STAR_COUNT 16384
-#define MAX_BOXES 64
-#define MAX_PROJECTILES 128
-#define MAX_PARTICLES 2048
-#define INTRO_SNOW_COUNT 400
-#define PINK_LIGHT_MAX 256
-
-/* Game states */
-typedef enum {
-    STATE_PLAY = 0,
-    STATE_LEVEL_END,
-    STATE_PARTY_END
-} GameState;
-
-typedef enum {
-    PARTY_UNDECIDED = 0,
-    PARTY_SUCCESS,
-    PARTY_FAILED
-} PartyResult;
 
 /*
  * GLOBAL CONFIGURATION (loaded from config file)
@@ -132,161 +112,8 @@ int getoptret = 0;
 int log_level = LOG_ERR;
 
 /*
- * GAME CONTEXT STRUCTURE
- */
-
-typedef struct {
-    /* Entity pools */
-    EntityPool stars;
-    EntityPool boxes;
-    EntityPool projectiles;
-    EntityPool particles;
-    EntityPool pink_lights;
-    EntityPool intro_snow;
-
-    /* Vertex arrays for rendering */
-    VertexArray va_stars;
-    VertexArray va_boxes;
-    VertexArray va_particles;
-    VertexArray va_pink_lights;
-    VertexArray va_projectiles;
-    VertexArray va_level;
-    VertexArray va_overlay_letters;
-    VertexArray va_overlay_goals;
-
-    /* Game state */
-    GameState state;
-    PartyResult party_result;
-    Camera cam;
-
-    int score;
-    int total_score;
-    float time_remaining;
-    float move_speed;
-    float max_speed;
-    float move_forward;
-    float move_lateral;
-
-    bool gravity_enabled;
-    bool on_ground;
-    float vertical_vel;
-
-    bool paused;
-    bool mouse_locked;
-    bool cheat_code_used;
-
-    /* Level info */
-    VoxelField vf;
-    int level_index;
-    int level_count;
-
-    /* Physics constants */
-    float cam_radius;
-    float cam_half_height;
-
-    /* Display info */
-    int dw, dh;
-    int center_x, center_y;
-
-    /* Render state storage */
-    ALLEGRO_STATE* render_state;
-
-    /* Display */
-    ALLEGRO_DISPLAY* display;
-    int pending_w;
-    int pending_h;
-    bool pending_resize;
-
-} GameContext;
-
-/*
  * GAME CONTEXT MANAGEMENT
  */
-
-void game_context_init(GameContext* ctx) {
-    memset(ctx, 0, sizeof(GameContext));
-
-    /* Initialize entity pools */
-    pool_init(&ctx->stars, STAR_COUNT);
-    pool_init(&ctx->boxes, MAX_BOXES);
-    pool_init(&ctx->projectiles, MAX_PROJECTILES);
-    pool_init(&ctx->particles, MAX_PARTICLES);
-    pool_init(&ctx->pink_lights, PINK_LIGHT_MAX);
-    pool_init(&ctx->intro_snow, INTRO_SNOW_COUNT);
-
-    /* Initialize vertex arrays */
-    va_init(&ctx->va_stars, STAR_COUNT * 6);
-    va_init(&ctx->va_boxes, MAX_BOXES * 36);
-    va_init(&ctx->va_particles, MAX_PARTICLES * 6);
-    va_init(&ctx->va_pink_lights, PINK_LIGHT_MAX * 6);
-    va_init(&ctx->va_projectiles, MAX_PROJECTILES * 6);
-    va_init(&ctx->va_level, 4096);
-    va_init(&ctx->va_overlay_letters, 4096);
-    va_init(&ctx->va_overlay_goals, 1024);
-
-    /* Default values */
-    ctx->state = STATE_PLAY;
-    ctx->party_result = PARTY_UNDECIDED;
-    ctx->gravity_enabled = true;
-    ctx->on_ground = true;
-    ctx->move_speed = base_speed;
-    ctx->max_speed = base_speed;
-    ctx->move_forward = 0.0f;
-    ctx->move_lateral = 0.0f;
-    ctx->mouse_locked = true;
-    ctx->time_remaining = 60.0f;
-
-    ctx->cam_radius = 3.0f * 0.4f;
-    ctx->cam_half_height = 40.0f * 0.4f;
-    ctx->cam.vertical_fov = (float)(60.0 * M_PI / 180.0);
-
-    /* Render state */
-    ctx->render_state = al_malloc(sizeof(ALLEGRO_STATE));
-
-    /* Display */
-    ctx->display = NULL;
-    ctx->pending_w = 0;
-    ctx->pending_h = 0;
-    ctx->pending_resize = false;
-    ctx->cheat_code_used = false;
-}
-
-void game_context_free(GameContext* ctx) {
-    pool_free(&ctx->stars);
-    pool_free(&ctx->boxes);
-    pool_free(&ctx->projectiles);
-    pool_free(&ctx->particles);
-    pool_free(&ctx->pink_lights);
-    pool_free(&ctx->intro_snow);
-
-    va_free(&ctx->va_stars);
-    va_free(&ctx->va_boxes);
-    va_free(&ctx->va_particles);
-    va_free(&ctx->va_pink_lights);
-    va_free(&ctx->va_projectiles);
-    va_free(&ctx->va_level);
-    va_free(&ctx->va_overlay_letters);
-    va_free(&ctx->va_overlay_goals);
-
-    if (ctx->vf.solid) free(ctx->vf.solid);
-    if (ctx->vf.is_goal) free(ctx->vf.is_goal);
-    free(ctx->render_state);
-}
-
-void game_context_reset_level(GameContext* ctx) {
-    pool_clear(&ctx->boxes);
-    pool_clear(&ctx->projectiles);
-    pool_clear(&ctx->particles);
-    pool_clear(&ctx->pink_lights);
-
-    ctx->state = STATE_PLAY;
-    ctx->gravity_enabled = true;
-    ctx->on_ground = true;
-    ctx->vertical_vel = 0.0f;
-    ctx->score = 0;
-    ctx->time_remaining = 60.0f;
-    ctx->paused = false;
-}
 
 /*
  * PARTICLE SPAWNING HELPERS
@@ -1022,7 +849,7 @@ int main(int argc, char** argv) {
 
     /* Initialize game context */
     GameContext ctx;
-    game_context_init(&ctx);
+    game_context_init(&ctx, base_speed);
     ctx.display = display;
 #ifdef __EMSCRIPTEN__
     /* fullscreen state callback */
