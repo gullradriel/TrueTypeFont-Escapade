@@ -13,6 +13,8 @@
 extern "C" {
 #endif
 
+#include <allegro5/allegro.h>
+
 #include "ttfe_vector3d.h"
 #include "ttfe_entities.h"
 

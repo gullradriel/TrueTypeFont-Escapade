@@ -6,9 +6,14 @@
  *\date 16/12/2025
  */
 
+#include <math.h>
 #include <string.h>
 
 #include "ttfe_game_context.h"
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 void game_context_init(GameContext* ctx, float base_move_speed) {
     memset(ctx, 0, sizeof(GameContext));
