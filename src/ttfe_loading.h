@@ -1,6 +1,6 @@
 /**\file ttfe_loading.h
  *  'loading' progress bar helpers
- *\author Castagnier Mickael
+ *\author Castagnier Mickael aka Gull Ra Driel
  *\version 1.0
  *\date 13/12/2025
  */

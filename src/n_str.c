@@ -904,7 +904,7 @@ char** split(const char* str, const char* delim, int empty) {
         }
     }
 
-    /* on ajoute une case a null pour finir le tableau */
+    /* add a NULL entry to terminate the array */
     sizeTab++;
     tab = (char**)realloc(tab, sizeof(char*) * sizeTab);
     tab[sizeTab - 1] = NULL;

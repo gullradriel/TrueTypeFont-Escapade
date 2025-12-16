@@ -1,6 +1,6 @@
 /**\file ttfe_vector3d.h
  *  3D vector, voxel and camera helpers
- *\author Castagnier Mickael
+ *\author Castagnier Mickael aka Gull Ra Driel
  *\version 1.0
  *\date 04/12/2025
  */

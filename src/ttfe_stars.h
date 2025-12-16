@@ -1,6 +1,6 @@
 /**\file ttfe_stars.h
  *  Stars helpers - now uses unified entity system
- *\author Castagnier Mickael
+ *\author Castagnier Mickael aka Gull Ra Driel
  *\version 1.0
  *\date 08/12/2025
  */

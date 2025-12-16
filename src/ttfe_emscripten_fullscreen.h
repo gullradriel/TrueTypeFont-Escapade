@@ -1,8 +1,16 @@
+/**\file ttfe_emscripten_fullscreen.h
+ *  Emscripten fullscreen callback handling
+ *\author Castagnier Mickael aka Gull Ra Driel
+ *\version 1.0
+ *\date 08/12/2025
+ */
+
 #ifdef __EMSCRIPTEN__
 
 #include <emscripten/html5.h>
 #include <allegro5/allegro.h>
 
+/* Callback function for handling fullscreen state changes in Emscripten. */
 EM_BOOL on_fullscreen_change(int eventType,
                              const EmscriptenFullscreenChangeEvent* e,
                              void* userData) {

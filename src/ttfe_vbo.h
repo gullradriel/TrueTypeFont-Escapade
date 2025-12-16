@@ -1,6 +1,6 @@
 /**\file ttfe_vbo.h
  *  3D VBO helpers
- *\author Castagnier Mickael
+ *\author Castagnier Mickael aka Gull Ra Driel
  *\version 1.0
  *\date 11/12/2025
  */

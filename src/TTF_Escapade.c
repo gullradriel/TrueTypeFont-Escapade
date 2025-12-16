@@ -1,6 +1,6 @@
 /**\file TTF_Escapade.c
  *  Main game file - refactored to use unified entity system
- *\author Castagnier Mickael
+ *\author Castagnier Mickael aka Gull Ra Driel
  *\version 1.0
  *\date 02/12/2025
  */

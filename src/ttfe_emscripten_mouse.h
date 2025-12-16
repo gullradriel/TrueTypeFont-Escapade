@@ -1,3 +1,10 @@
+/**\file ttfe_emscripten_mouse.h
+ *  Emscripten pointer lock and mouse handling
+ *\author Castagnier Mickael aka Gull Ra Driel
+ *\version 1.0
+ *\date 08/12/2025
+ */
+
 #pragma once
 
 #ifdef __EMSCRIPTEN__

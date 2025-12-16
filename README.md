@@ -61,9 +61,16 @@ Fire the surprise boxes to reclaim some life/speed/score upgrade bonuses.
 # How to build
 
 ## prerequisites
+
+### Linux/Windows build
 - make
 - gcc
 - allegro development libraries installed
+
+### WebAssembly (wasm) build
+- Emscripten SDK installed and sourced (`source /path/to/emsdk/emsdk_env.sh`)
+- make
+- git (for cloning dependencies)
 
 ## procedure
 
@@ -89,14 +96,14 @@ make wasm
 # clean Linux/Windows build
 make clean
 
-# clean wasm/Emscripten game build
+# clean wasm/Emscripten build (game and libs)
 make wasm-clean
 
-# clean wasm/Emscripten libs used by the wasm game
-make wasm-clean-libs
+# clean all builds
+make clean-all
 ```
 
-# Ressources used
+# Resources used
 
 ## songs and sound effects
 
