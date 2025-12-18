@@ -58,6 +58,12 @@ Fire the surprise boxes to reclaim some life/speed/score upgrade bonuses.
 - ESC   : quit, everywhere ESC key is quit, be carefull ! 
   WEB VERSION: press ESC two times, first time to ungrab the mouse, second time to exit
 
+# WASM/Enscripten version online
+
+If you can not build the entry of if the binaries are not working for you, just click here:
+
+https://www.nilorea.net/Games/TrueTypeFont_Escapade/
+
 # How to build
 
 ## prerequisites
