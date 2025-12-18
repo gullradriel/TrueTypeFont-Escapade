@@ -1,0 +1,21 @@
+*************************************************
+********* Welcome to TrueTypeFont Escapade ! **************
+*************************************************
+The game:                                                            
+ - Reach the green glyph at the end of the level                     
+ - Shoot bonus boxes to gain more points/time/speed                  
+ - Do not fall or be out of time
+
+Controls:                                                            
+ - ZQSD or arrow keys => upward/backward/strafe left and right     
+ - Mouse axis => orientation                                             
+ - Shoot => left mouse button                                       
+ - F1 => pause/unpause the game and unlock/lock the mouse             
+ - F11 => toggle fullscreen mode                                      
+                                                                      
+                                      HAVE FUN, MERRY CHRITMAS !
+                                                                      
+
+
+
+
