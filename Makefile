@@ -45,7 +45,7 @@ ifeq ($(OS),Windows_NT)
         EXT=.exe
         CLIBS=-IC:/msys64/mingw64/include -LC:/msys64/mingw64/lib
     endif
-    CLIBS+= $(ALLEGRO_LIBS) -Wl,-Bstatic -lpthread  -Wl,-Bdynamic -lws2_32  -L../LIB/. #-mwindows
+    CLIBS+= $(ALLEGRO_LIBS) -Wl,-Bstatic -lpthread  -Wl,-Bdynamic -lws2_32  -L../LIB/. -mwindows
 else
     UNAME_S= $(shell uname -s)
     RM=rm -f
