@@ -89,7 +89,7 @@ void fire_projectile(GameContext* ctx, ALLEGRO_SAMPLE* sfx_shoot, bool audio_ok,
 }
 
 /* update all the projectiles actives in the list */
-void update_projectiles(GameContext* ctx, float dt, ALLEGRO_SAMPLE* sfx_hit_level, ALLEGRO_SAMPLE* sfx_hit_bonus, bool audio_ok, int* level_boxes_hit, int* level_time_bonus_boxes, int* level_speed_bonus_boxes,float speed_bonus_increment,float speed_max_limit) {
+void update_projectiles(GameContext* ctx, float dt, ALLEGRO_SAMPLE* sfx_hit_level, ALLEGRO_SAMPLE* sfx_hit_bonus, bool audio_ok, int* level_boxes_hit, int* level_time_bonus_boxes, int* level_speed_bonus_boxes, float speed_bonus_increment, float speed_max_limit) {
     for (int i = 0; i < ctx->projectiles.capacity; ++i) {
         GameEntity* proj = &ctx->projectiles.entities[i];
         if (!entity_update_projectile(proj, dt)) continue;

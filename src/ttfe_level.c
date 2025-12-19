@@ -22,7 +22,7 @@ void wasm_yield(void) {
 #endif
 
 /* build a level from a font */
-int build_level_geometry(GameContext* ctx, ALLEGRO_FONT* level_font, ALLEGRO_FONT *gui_font, const char* phrase, int phrase_len,int level_font_size) {
+int build_level_geometry(GameContext* ctx, ALLEGRO_FONT* level_font, ALLEGRO_FONT* gui_font, const char* phrase, int phrase_len, int level_font_size) {
     int text_w = al_get_text_width(level_font, phrase);
     int text_h = al_get_font_line_height(level_font);
 
@@ -194,7 +194,6 @@ int build_level_geometry(GameContext* ctx, ALLEGRO_FONT* level_font, ALLEGRO_FON
     return TRUE;
 }
 
-
 /* place bonus boxes and 'lights' */
 void place_boxes_and_lights(GameContext* ctx) {
     /* Collect walkable cells */
@@ -315,6 +314,3 @@ void setup_camera_start(GameContext* ctx) {
     }
     ctx->cam.pitch = 0.0f;
 }
-
-
-

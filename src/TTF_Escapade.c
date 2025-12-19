@@ -501,7 +501,7 @@ int main(int argc, char** argv) {
 
         /* Build level */
         n_log(LOG_DEBUG, "Level %d: build_level_geometry for: %s", ctx.level_index + 1, phrase);
-        if (!build_level_geometry(&ctx, level_font, gui_font, phrase, phrase_len,level_font_size)) {
+        if (!build_level_geometry(&ctx, level_font, gui_font, phrase, phrase_len, level_font_size)) {
             goto cleanup;
         }
 
@@ -725,7 +725,7 @@ If the browser refuses, the click callback will acquire it on next click.
                     al_hide_mouse_cursor(display);
 #endif
                 } else if (ev.mouse.button == 1 && ctx.state == STATE_PLAY) {
-                    fire_projectile(&ctx, sfx_shoot, audio_ok,bullet_speed);
+                    fire_projectile(&ctx, sfx_shoot, audio_ok, bullet_speed);
                 }
             } else if (ev.type == ALLEGRO_EVENT_MOUSE_AXES) {
 #ifndef __EMSCRIPTEN__
@@ -976,7 +976,7 @@ If the browser refuses, the click callback will acquire it on next click.
                     /* Update projectiles */
                     update_projectiles(&ctx, dt, sfx_hit_level, sfx_hit_bonus, audio_ok,
                                        &level_boxes_hit, &level_time_bonus_boxes, &level_speed_bonus_boxes,
-									   speed_bonus_increment,speed_max_limit);
+                                       speed_bonus_increment, speed_max_limit);
                 }
 
                 update_pink_lights(&ctx, dt);

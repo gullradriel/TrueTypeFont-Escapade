@@ -12,7 +12,6 @@
 extern "C" {
 #endif
 
-
 #include "ttfe_game_context.h"
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
@@ -24,12 +23,11 @@ typedef struct {
 } WalkCell;
 
 /* build a level from a font */
-int build_level_geometry(GameContext* ctx, ALLEGRO_FONT* level_font, ALLEGRO_FONT *gui_font, const char* phrase, int phrase_len,int level_font_size);
+int build_level_geometry(GameContext* ctx, ALLEGRO_FONT* level_font, ALLEGRO_FONT* gui_font, const char* phrase, int phrase_len, int level_font_size);
 /* place bonus boxes and 'lights' */
 void place_boxes_and_lights(GameContext* ctx);
 /* set the camera orientation to point to the end of the level */
 void setup_camera_start(GameContext* ctx);
-
 
 #ifdef __cplusplus
 }

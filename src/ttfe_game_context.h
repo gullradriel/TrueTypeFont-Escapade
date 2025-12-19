@@ -101,8 +101,8 @@ typedef struct {
     int pending_h;
     bool pending_resize;
 
-/* VBO object */
-TTFE_VBO g_ttfe_stream_vbo;
+    /* VBO object */
+    TTFE_VBO g_ttfe_stream_vbo;
 
 } GameContext;
 
