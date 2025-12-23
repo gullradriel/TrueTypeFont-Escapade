@@ -46,6 +46,8 @@ Use the keyboard and mouse to reach the exit letter at the end of the sentence w
 
 Fire the surprise boxes to reclaim some life/speed/score upgrade bonuses.
 
+Fire the moving red boxes to avoid being pushed and to win more score.
+
 # Controls
 
 - W/S/A/D or arrows or ZQSD : move
