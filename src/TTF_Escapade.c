@@ -421,6 +421,17 @@ int main(int argc, char** argv) {
             in_intro = false;
             ctx.party_result = PARTY_FAILED;
             goto cleanup;
+        } else if (ev.type == ALLEGRO_EVENT_DISPLAY_RESIZE) {
+            al_acknowledge_resize(display);
+            ctx.dw = al_get_display_width(display);
+            ctx.dh = al_get_display_height(display);
+            ctx.center_x = ctx.dw / 2;
+            ctx.center_y = ctx.dh / 2;
+#ifndef __EMSCRIPTEN__
+            if (ctx.mouse_locked) {
+                al_set_mouse_xy(display, ctx.center_x, ctx.center_y);
+            }
+#endif
         }
 
         if (do_logic) {
@@ -573,6 +584,21 @@ int main(int argc, char** argv) {
         Free(phrase);
 
         /* flush queue to eliminate all unecessary events accumulated during loading phases */
+        ALLEGRO_EVENT flush_ev;
+        while (al_get_next_event(queue, &flush_ev)) {
+            if (flush_ev.type == ALLEGRO_EVENT_DISPLAY_RESIZE) {
+                al_acknowledge_resize(display);
+                ctx.dw = al_get_display_width(display);
+                ctx.dh = al_get_display_height(display);
+                ctx.center_x = ctx.dw / 2;
+                ctx.center_y = ctx.dh / 2;
+#ifndef __EMSCRIPTEN__
+                if (ctx.mouse_locked) {
+                    al_set_mouse_xy(display, ctx.center_x, ctx.center_y);
+                }
+#endif
+            }
+        }
         al_flush_event_queue(queue);
 
         /* Level event loop */
@@ -1334,7 +1360,19 @@ If the browser refuses, the click callback will acquire it on next click.
                          ev.keyboard.keycode == ALLEGRO_KEY_ENTER ||
                          ev.keyboard.keycode == ALLEGRO_KEY_SPACE))) {
                 in_outro = false;
+            } else if (ev.type == ALLEGRO_EVENT_DISPLAY_RESIZE) {
+                al_acknowledge_resize(display);
+                ctx.dw = al_get_display_width(display);
+                ctx.dh = al_get_display_height(display);
+                ctx.center_x = ctx.dw / 2;
+                ctx.center_y = ctx.dh / 2;
+#ifndef __EMSCRIPTEN__
+                if (ctx.mouse_locked) {
+                    al_set_mouse_xy(display, ctx.center_x, ctx.center_y);
+                }
+#endif
             }
+
             if (do_logic) {
                 const float dt = 1.0f / 60.0f;
 
