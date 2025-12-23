@@ -21,6 +21,7 @@ extern "C" {
 
 #define STAR_COUNT 16384
 #define MAX_BOXES 64
+#define MAX_HITTING_BOXES 16
 #define MAX_PROJECTILES 128
 #define MAX_PARTICLES 2048
 #define INTRO_SNOW_COUNT 400

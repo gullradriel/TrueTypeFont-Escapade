@@ -101,6 +101,8 @@ float speed_bonus_increment = 0.2f;
 float speed_max_limit = 3.0f;
 float bullet_speed = 150.0f;
 int bullet_delta_divider = 4;
+float obstacle_spawn_timer = 0.0f;
+float obstacle_spawn_delay = 4.0f; /* Une boite toutes les 2 secondes */
 
 int getoptret = 0;
 
@@ -972,13 +974,14 @@ If the browser refuses, the click callback will acquire it on next click.
                             }
                         }
                     }
-
-                    /* Update projectiles */
-                    update_projectiles(&ctx, dt, sfx_hit_level, sfx_hit_bonus, audio_ok,
-                                       &level_boxes_hit, &level_time_bonus_boxes, &level_speed_bonus_boxes,
-                                       speed_bonus_increment, speed_max_limit);
                 }
 
+                /* Update projectiles */
+                update_projectiles(&ctx, dt, sfx_hit_level, sfx_hit_bonus, audio_ok,
+                                   &level_boxes_hit, &level_time_bonus_boxes, &level_speed_bonus_boxes,
+                                   speed_bonus_increment, speed_max_limit);
+
+                /* Update moving pink lights */
                 update_pink_lights(&ctx, dt);
 
                 /* Celebration particles */
@@ -991,6 +994,89 @@ If the browser refuses, the click callback will acquire it on next click.
                     ctx.state == STATE_LEVEL_END ||
                     (ctx.state == STATE_PARTY_END && ctx.party_result == PARTY_SUCCESS)) {
                     update_particles(&ctx, gravity, dt);
+                }
+
+                /* Update obstacles */
+                if (ctx.state == STATE_PLAY && !ctx.paused) {
+                    /* Spawn Obstacles */
+                    obstacle_spawn_timer += dt;
+                    if (obstacle_spawn_timer >= obstacle_spawn_delay) {
+                        obstacle_spawn_timer = 0.0f;
+
+                        /* Spawn at the end of the level geometry */
+                        float end_x = ctx.vf.origin_x + ctx.vf.gw * ctx.vf.cell_size;
+                        float z_span = ctx.vf.gh * ctx.vf.cell_size;
+
+                        /* Random Z position within level width */
+                        float spawn_z = ctx.vf.origin_z + frandf(0.0f, z_span);
+
+                        /* Random Size */
+                        float size = frandf(2.5f, 6.0f);
+
+                        GameEntity* obs = pool_alloc(&ctx.boxes);
+                        if (obs) {
+                            /* speed (negative X) */
+                            Vec3 vel = v_make(-frandf(20.0f, 60.0f), 0.0f, 0.0f);
+                            /* Y over the surface of the letters */
+                            Vec3 pos = v_make(end_x, ctx.vf.extrude_h + size, spawn_z);
+                            entity_init_obstacle(obs, pos, vel, size);
+                        }
+                    }
+
+                    /* Update boxes and boxes collisions */
+                    for (int i = 0; i < ctx.boxes.capacity; ++i) {
+                        GameEntity* box = &ctx.boxes.entities[i];
+                        if (!entity_is_active(box) || !(box->flags & ENTITY_FLAG_OBSTACLE)) continue;
+
+                        /* Move */
+                        box->pos = v_add(box->pos, v_scale(box->vel, dt));
+
+                        /* Collision parameters */
+                        float b_half = box->size;
+                        /* Simulating a 2.5x5.0 wide collision boxe as the player */
+                        float p_rad = 2.5f;
+                        float p_height = 5.0f;
+
+                        /* Test AABB */
+                        bool collide_x = (ctx.cam.position.x + p_rad > box->pos.x - b_half) &&
+                                         (ctx.cam.position.x - p_rad < box->pos.x + b_half);
+                        bool collide_z = (ctx.cam.position.z + p_rad > box->pos.z - b_half) &&
+                                         (ctx.cam.position.z - p_rad < box->pos.z + b_half);
+                        bool collide_y = (ctx.cam.position.y + p_height > box->pos.y - b_half) &&
+                                         (ctx.cam.position.y - p_height < box->pos.y + b_half);
+
+                        if (collide_x && collide_z && collide_y) {
+                            /* Use overlap to push back player */
+                            /* We computer how much the player went inside the box in X */
+                            /* As the box is coming from the right (X is lowering), front face is at: box->pos.x - b_half */
+                            /* Player's nose is at: ctx->cam.position.x + p_rad */
+                            float overlap_x = (ctx.cam.position.x + p_rad) - (box->pos.x - b_half);
+                            if (overlap_x > 0) {
+                                /* Move back player */
+                                ctx.cam.position.x -= overlap_x;
+                                /* Add box movement to it */
+                                ctx.cam.position.x += (box->vel.x * dt);
+                            }
+                            /* Side push effect */
+                            if (fabsf(ctx.cam.position.z - box->pos.z) < b_half * 0.5f) {
+                                /* Do nothing if near the center of the box */
+                            } else {
+                                /* Else move slightly on the side of the box */
+                                float side_push = (ctx.cam.position.z > box->pos.z) ? 5.0f : -5.0f;
+                                ctx.cam.position.z += side_push * dt;
+                            }
+                            /* Box chock effect: vertical bump */
+                            ctx.cam.position.y += 0.1f;
+                            /* Make the camera wobble for feedback */
+                            ctx.cam.pitch += frandf(-0.02f, 0.02f);
+                            ctx.cam.yaw += frandf(-0.02f, 0.02f);
+                        }
+
+                        /* if bump box is out of the map, kill it */
+                        if (box->pos.x < ctx.vf.origin_x - 30.0f) {
+                            entity_deactivate(box);
+                        }
+                    }
                 }
 
                 do_logic = 0;
@@ -1289,9 +1375,9 @@ If the browser refuses, the click callback will acquire it on next click.
 
                     p->pos.x += p->vel.x * dt;
                     p->pos.y += p->vel.y * dt;
-                    p->life -= dt;
+                    p->lifetime -= dt;
 
-                    if (p->life <= 0.0f || p->pos.y > (float)ctx.dh + 50.0f) {
+                    if (p->lifetime <= 0.0f || p->pos.y > (float)ctx.dh + 50.0f) {
                         entity_deactivate(p);
                     }
                 }

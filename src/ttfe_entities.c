@@ -80,31 +80,37 @@ void entity_init_star(GameEntity* e, Vec3 pos, float size, ALLEGRO_COLOR color) 
     e->prev_pos = pos;
     e->color = color;
     e->size = size;
-    e->life = 0.0f;
+    e->lifetime = 0.0f;
+    e->hp = 1;
+    e->max_hp = e->hp;
     e->phase = frandf(0.0f, 6.2831853f);
     e->flags = ENTITY_FLAG_ACTIVE;
 }
 
 /* Create a particle entity */
-void entity_init_particle(GameEntity* e, Vec3 pos, Vec3 vel, float life, float size, ALLEGRO_COLOR color) {
+void entity_init_particle(GameEntity* e, Vec3 pos, Vec3 vel, float lifetime, float size, ALLEGRO_COLOR color) {
     e->pos = pos;
     e->vel = vel;
     e->prev_pos = pos;
     e->color = color;
     e->size = size;
-    e->life = life;
+    e->lifetime = lifetime;
+    e->hp = 1;
+    e->max_hp = e->hp;
     e->phase = 0.0f;
     e->flags = ENTITY_FLAG_ACTIVE;
 }
 
 /* Create a projectile entity */
-void entity_init_projectile(GameEntity* e, Vec3 pos, Vec3 vel, float life) {
+void entity_init_projectile(GameEntity* e, Vec3 pos, Vec3 vel, float lifetime) {
     e->pos = pos;
     e->vel = vel;
     e->prev_pos = pos;
     e->color = al_map_rgb(255, 200, 200);
     e->size = 0.05f;
-    e->life = life;
+    e->lifetime = lifetime;
+    e->hp = 1;
+    e->max_hp = e->hp;
     e->phase = 0.0f;
     e->flags = ENTITY_FLAG_ACTIVE;
 }
@@ -115,7 +121,9 @@ void entity_init_box(GameEntity* e, Vec3 pos, float half_size, uint32_t bonus_fl
     e->vel = v_zero();
     e->prev_pos = pos;
     e->size = half_size;
-    e->life = 0.0f;
+    e->lifetime = 0.0f;
+    e->hp = 1;
+    e->max_hp = e->hp;
     e->phase = 0.0f;
     e->flags = ENTITY_FLAG_ACTIVE | bonus_flags;
 
@@ -135,7 +143,9 @@ void entity_init_pink_light(GameEntity* e, Vec3 pos, float radius) {
     e->prev_pos = pos;
     e->color = al_map_rgba(0xff, 0x60, 0xff, 180);
     e->size = radius;
-    e->life = 0.0f;
+    e->lifetime = 0.0f;
+    e->hp = 1;
+    e->max_hp = e->hp;
     e->phase = frandf(0.0f, 6.2831853f);
     e->flags = ENTITY_FLAG_ACTIVE;
 }
@@ -147,9 +157,31 @@ void entity_init_snowflake(GameEntity* e, float x, float y, float vy, float size
     e->prev_pos = e->pos;
     e->color = al_map_rgb(255, 255, 255);
     e->size = size;
-    e->life = 0.0f;
+    e->lifetime = 0.0f;
+    e->hp = 1;
+    e->max_hp = e->hp;
     e->phase = 0.0f;
     e->flags = ENTITY_FLAG_ACTIVE;
+}
+
+/* Create a moving obstacle box */
+void entity_init_obstacle(GameEntity* e, Vec3 pos, Vec3 vel, float size) {
+    e->pos = pos;
+    e->vel = vel;
+    e->prev_pos = pos;
+    e->size = size;
+    e->lifetime = 100.0f; /* long lifetime, will be killed when getting out of the map */
+    e->phase = 0.0f;
+    e->flags = ENTITY_FLAG_ACTIVE | ENTITY_FLAG_OBSTACLE;
+
+    /* Hp are function of size */
+    e->hp = (int)size;
+    if (e->hp < 1)
+        e->hp = 1;
+    e->max_hp = e->hp;
+
+    /* Couleur rouge menaçante */
+    e->color = al_map_rgb(200, 50, 50);
 }
 
 /* ENTITY UPDATE FUNCTIONS */
@@ -160,9 +192,9 @@ bool entity_update_particle(GameEntity* e, float dt, float gravity) {
 
     e->pos = v_add(e->pos, v_scale(e->vel, dt));
     e->vel.y += gravity * 0.5f * dt;
-    e->life -= dt;
+    e->lifetime -= dt;
 
-    if (e->life <= 0.0f) {
+    if (e->lifetime <= 0.0f) {
         entity_deactivate(e);
         return false;
     }
@@ -175,9 +207,9 @@ bool entity_update_projectile(GameEntity* e, float dt) {
 
     e->prev_pos = e->pos;
     e->pos = v_add(e->pos, v_scale(e->vel, dt));
-    e->life -= dt;
+    e->lifetime -= dt;
 
-    if (e->life <= 0.0f) {
+    if (e->lifetime <= 0.0f) {
         entity_deactivate(e);
         return false;
     }

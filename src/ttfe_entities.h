@@ -22,6 +22,7 @@ typedef enum {
     ENTITY_FLAG_TIME_BONUS = (1 << 1),
     ENTITY_FLAG_SPEED_BONUS = (1 << 2),
     ENTITY_FLAG_SCORE_BONUS = (1 << 3),
+    ENTITY_FLAG_OBSTACLE = (1 << 4),
 } EntityFlags;
 
 /* UNIFIED GAME ENTITY, used for: Stars, Particles, Projectiles, Boxes, Pink Lights, Snowflakes */
@@ -32,8 +33,10 @@ typedef struct {
     Vec3 prev_pos; /* previous position (for collision interpolation) */
     ALLEGRO_COLOR color;
     float size;     /* visual size / half_size for boxes */
-    float life;     /* lifetime remaining (or phase for lights/stars) */
+    float lifetime; /* lifetime remaining (or phase for lights/stars) */
     float phase;    /* animation phase offset */
+    int hp;         /* entity life */
+    int max_hp;     /* max life (helper to compute hp/max_hp) */
     uint32_t flags; /* EntityFlags bitfield */
 } GameEntity;
 
@@ -69,15 +72,17 @@ int pool_active_count(const EntityPool* pool);
 /* Create a star entity */
 void entity_init_star(GameEntity* e, Vec3 pos, float size, ALLEGRO_COLOR color);
 /* Create a particle entity */
-void entity_init_particle(GameEntity* e, Vec3 pos, Vec3 vel, float life, float size, ALLEGRO_COLOR color);
+void entity_init_particle(GameEntity* e, Vec3 pos, Vec3 vel, float lifetime, float size, ALLEGRO_COLOR color);
 /* Create a projectile entity */
-void entity_init_projectile(GameEntity* e, Vec3 pos, Vec3 vel, float life);
+void entity_init_projectile(GameEntity* e, Vec3 pos, Vec3 vel, float lifetime);
 /* Create a box entity */
 void entity_init_box(GameEntity* e, Vec3 pos, float half_size, uint32_t bonus_flags);
 /* Create a pink light entity */
 void entity_init_pink_light(GameEntity* e, Vec3 pos, float radius);
 /* Create a snowflake entity (2D screen space) */
 void entity_init_snowflake(GameEntity* e, float x, float y, float vy, float size);
+/* Create a moving obstacle box */
+void entity_init_obstacle(GameEntity* e, Vec3 pos, Vec3 vel, float size);
 
 /* ENTITY UPDATE FUNCTIONS */
 

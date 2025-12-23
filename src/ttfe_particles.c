@@ -112,29 +112,52 @@ void update_projectiles(GameContext* ctx, float dt, ALLEGRO_SAMPLE* sfx_hit_leve
                 if (!entity_is_active(box)) continue;
 
                 if (entity_box_contains_point(box, trajectory_point)) {
-                    entity_deactivate(box);
-                    entity_deactivate(proj);
-                    hit_something = true;
-                    hit_bonus = true;
+                    /* if it's an obstacle, manage hp */
+                    if (box->flags & ENTITY_FLAG_OBSTACLE) {
+                        box->hp--;
+                        hit_something = true;
+                        hit_bonus = false;                                  /* for impact sound */
+                        spawn_wall_hit_particles(ctx, trajectory_point, 5); /* particles */
+                        entity_deactivate(proj);
 
-                    spawn_box_hit_particles(ctx, box->pos, 40, ctx->vf.cell_size);
+                        /* flash when hit */
+                        float ratio = (float)box->hp / (float)box->max_hp;
+                        box->color = al_map_rgb_f(0.8f * ratio, 0.2f * ratio, 0.2f * ratio);
 
-                    if (box->flags & ENTITY_FLAG_TIME_BONUS) {
-                        ctx->time_remaining += 30.0f;
-                        (*level_time_bonus_boxes)++;
-                        ctx->score += 15;
-                    } else if (box->flags & ENTITY_FLAG_SPEED_BONUS) {
-                        ctx->move_speed += speed_bonus_increment;
-                        if (ctx->move_speed > speed_max_limit)
-                            ctx->move_speed = speed_max_limit;
-                        /* save max achieved move speed */
-                        if (ctx->move_speed > ctx->max_speed)
-                            ctx->max_speed = ctx->move_speed;
-                        (*level_speed_bonus_boxes)++;
-                        ctx->score += 15;
-                    } else {
-                        (*level_boxes_hit)++;
-                        ctx->score += 100;
+                        if (box->hp <= 0) {
+                            entity_deactivate(box);
+                            spawn_box_hit_particles(ctx, box->pos, 60, box->size); /* explosion */
+                            if (audio_ok && sfx_hit_level) {
+                                al_play_sample(sfx_hit_level, 0.8f, 0.0f, 1.5f, ALLEGRO_PLAYMODE_ONCE, NULL);
+                            }
+                            ctx->score += 50 * box->max_hp; /* size based score */
+                        }
+                    }
+                    /* classic bonus */
+                    else {
+                        entity_deactivate(box);
+                        entity_deactivate(proj);
+                        hit_something = true;
+                        hit_bonus = true;
+
+                        spawn_box_hit_particles(ctx, box->pos, 40, ctx->vf.cell_size);
+
+                        if (box->flags & ENTITY_FLAG_TIME_BONUS) {
+                            ctx->time_remaining += 30.0f;
+                            (*level_time_bonus_boxes)++;
+                            ctx->score += 15;
+                        } else if (box->flags & ENTITY_FLAG_SPEED_BONUS) {
+                            ctx->move_speed += speed_bonus_increment;
+                            if (ctx->move_speed > speed_max_limit)
+                                ctx->move_speed = speed_max_limit;
+                            if (ctx->move_speed > ctx->max_speed)
+                                ctx->max_speed = ctx->move_speed;
+                            (*level_speed_bonus_boxes)++;
+                            ctx->score += 15;
+                        } else {
+                            (*level_boxes_hit)++;
+                            ctx->score += 100;
+                        }
                     }
                     break;
                 }

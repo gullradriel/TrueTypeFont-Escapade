@@ -20,7 +20,7 @@ void game_context_init(GameContext* ctx, float base_move_speed) {
 
     /* Initialize entity pools */
     pool_init(&ctx->stars, STAR_COUNT);
-    pool_init(&ctx->boxes, MAX_BOXES);
+    pool_init(&ctx->boxes, MAX_BOXES + MAX_HITTING_BOXES);
     pool_init(&ctx->projectiles, MAX_PROJECTILES);
     pool_init(&ctx->particles, MAX_PARTICLES);
     pool_init(&ctx->pink_lights, PINK_LIGHT_MAX);
@@ -28,7 +28,7 @@ void game_context_init(GameContext* ctx, float base_move_speed) {
 
     /* Initialize vertex arrays */
     va_init(&ctx->va_stars, STAR_COUNT * 6);
-    va_init(&ctx->va_boxes, MAX_BOXES * 36);
+    va_init(&ctx->va_boxes, (MAX_BOXES + MAX_HITTING_BOXES) * 36);
     va_init(&ctx->va_particles, MAX_PARTICLES * 6);
     va_init(&ctx->va_pink_lights, PINK_LIGHT_MAX * 6);
     va_init(&ctx->va_projectiles, MAX_PROJECTILES * 6);
