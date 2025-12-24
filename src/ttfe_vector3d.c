@@ -187,6 +187,36 @@ bool capsule_collides(const VoxelField* vf, Vec3 pos, float radius, float half_h
     return false;
 }
 
+/* Capsule (vertical cylinder) vs AABB */
+bool capsule_aabb_collides(Vec3 pos, float radius, float half_height, Vec3 box_pos, float b_half) {
+    /* Box bounds */
+    float bx0 = box_pos.x - b_half, bx1 = box_pos.x + b_half;
+    float by0 = box_pos.y - b_half, by1 = box_pos.y + b_half;
+    float bz0 = box_pos.z - b_half, bz1 = box_pos.z + b_half;
+
+    /* Capsule segment endpoints (vertical) */
+    float sy0 = pos.y - half_height;
+    float sy1 = pos.y + half_height;
+
+    /* Closest point in XZ from capsule axis to box */
+    float nx = clampf(pos.x, bx0, bx1);
+    float nz = clampf(pos.z, bz0, bz1);
+    float dx = pos.x - nx;
+    float dz = pos.z - nz;
+
+    /* Distance in Y between capsule segment [sy0, sy1] and box interval [by0, by1] */
+    float dy = 0.0f;
+    if (sy1 < by0)
+        dy = by0 - sy1; /* capsule entirely below box */
+    else if (sy0 > by1)
+        dy = sy0 - by1; /* capsule entirely above box */
+    /* else intervals overlap => dy = 0 */
+
+    /* Sphere distance to AABB "expanded" by capsule segment in Y */
+    float r2 = radius * radius;
+    return (dx * dx + dz * dz + dy * dy) <= r2;
+}
+
 /*
  * VERTEX ARRAY (Dynamic)
  */

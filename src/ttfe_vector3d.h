@@ -86,6 +86,8 @@ void world_to_grid(const VoxelField* vf, float x, float z, int* gx, int* gy);
 int is_solid(const VoxelField* vf, int gx, int gy);
 /* Capsule (vertical cylinder) vs voxel grid collision */
 bool capsule_collides(const VoxelField* vf, Vec3 pos, float radius, float half_height);
+/* Capsule (vertical cylinder) vs AABB collision */
+bool capsule_aabb_collides(Vec3 pos, float radius, float half_height, Vec3 box_pos, float b_half);
 
 /*
  * VERTEX ARRAY (Dynamic)
